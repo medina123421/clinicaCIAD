@@ -947,11 +947,13 @@ include '../../includes/header.php';
                                                 de estudios recientes)</h6>
                                             <div class="row g-2">
                                                 <div class="col-12">
-                                                    <?= renderCheckbox('lab_glucosa_ayunas', 'Glucosa', $datos) ?></div>
+                                                    <?= renderCheckbox('lab_glucosa_ayunas', 'Glucosa', $datos) ?>
+                                                </div>
                                                 <div class="col-12"><?= renderCheckbox('lab_hba1c', 'HbA1c', $datos) ?>
                                                 </div>
                                                 <div class="col-12">
-                                                    <?= renderCheckbox('lab_lipidos', 'Perfil lipídico', $datos) ?></div>
+                                                    <?= renderCheckbox('lab_lipidos', 'Perfil lipídico', $datos) ?>
+                                                </div>
                                                 <div class="col-12">
                                                     <?= renderCheckbox('lab_creatinina_tfg', 'Creatinina y TFG', $datos) ?>
                                                 </div>
@@ -959,7 +961,8 @@ include '../../includes/header.php';
                                                     <?= renderCheckbox('lab_microalbuminuria', 'Microalbuminuria', $datos) ?>
                                                 </div>
                                                 <div class="col-12">
-                                                    <?= renderCheckbox('lab_ego_aplica', 'EGO (si aplica)', $datos) ?></div>
+                                                    <?= renderCheckbox('lab_ego_aplica', 'EGO (si aplica)', $datos) ?>
+                                                </div>
                                                 <div class="col-12">
                                                     <?= renderCheckbox('lab_funcion_hepatica_especifica', 'Función hepática (en pacientes con tratamientos específicos)', $datos) ?>
                                                 </div>
@@ -1006,7 +1009,8 @@ include '../../includes/header.php';
                                                     <?= renderCheckbox('consumo_alcohol', 'Consumo de alcohol', $datos) ?>
                                                 </div>
                                                 <div class="col-12">
-                                                    <?= renderCheckbox('tabaquismo', 'Tabaquismo', $datos) ?></div>
+                                                    <?= renderCheckbox('tabaquismo', 'Tabaquismo', $datos) ?>
+                                                </div>
                                                 <div class="col-12">
                                                     <?= renderCheckbox('horarios_comida_regulares', 'Horarios de comida', $datos) ?>
                                                 </div>
@@ -1023,7 +1027,8 @@ include '../../includes/header.php';
                                             <h6 class="fw-bold text-primary mb-3">7. Salud Mental y Bienestar</h6>
                                             <div class="row g-2">
                                                 <div class="col-12">
-                                                    <?= renderCheckbox('estado_animo', 'Estado de ánimo', $datos) ?></div>
+                                                    <?= renderCheckbox('estado_animo', 'Estado de ánimo', $datos) ?>
+                                                </div>
                                                 <div class="col-12">
                                                     <?= renderCheckbox('sintomas_ansiedad_depresion', 'Síntomas de ansiedad o depresión', $datos) ?>
                                                 </div>
@@ -1052,7 +1057,8 @@ include '../../includes/header.php';
                                                     <?= renderCheckbox('prevencion_hipoglucemia', 'Prevención de hipoglucemia', $datos) ?>
                                                 </div>
                                                 <div class="col-md-6">
-                                                    <?= renderCheckbox('cuidado_pies', 'Cuidado de pies', $datos) ?></div>
+                                                    <?= renderCheckbox('cuidado_pies', 'Cuidado de pies', $datos) ?>
+                                                </div>
                                                 <div class="col-md-6">
                                                     <?= renderCheckbox('revision_metas', 'Revisión de metas del tratamiento', $datos) ?>
                                                 </div>
@@ -1068,12 +1074,6 @@ include '../../includes/header.php';
                                         <textarea name="observaciones_adicionales" class="form-control" rows="5"
                                             placeholder="Escriba el plan detallado, cambios en dosis, solicitud de exámenes..."><?= htmlspecialchars($datos['observaciones_adicionales'] ?? '') ?></textarea>
                                     </div>
-                                </div>
-
-                                <div class="col-md-12">
-                                    <label class="form-label fw-bold">Plan Médico, Conducta y Próximos Pasos</label>
-                                    <textarea name="observaciones_adicionales" class="form-control" rows="5"
-                                        placeholder="Escriba el plan detallado, cambios en dosis, solicitud de exámenes..."><?= htmlspecialchars($datos['observaciones_adicionales'] ?? '') ?></textarea>
                                 </div>
                             </div>
                         </div>
