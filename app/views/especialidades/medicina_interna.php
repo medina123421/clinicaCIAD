@@ -517,6 +517,12 @@ include '../../includes/header.php';
                                             <div class="col-12">
                                                 <?= renderCheckbox('infecciones_piel', 'Infecciones de piel recurrentes', $datos) ?>
                                             </div>
+                                            <div class="col-12">
+                                                <?= renderCheckbox('infecciones_urinarias', 'infecciones urinarias recurentes', $datos) ?>
+                                            </div>
+                                            <div class="col-12">
+                                                <?= renderCheckbox('pie_diabetico', 'pie diabetico / Ulceras cronicas', $datos) ?>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
