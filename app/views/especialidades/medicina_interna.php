@@ -822,11 +822,45 @@ include '../../includes/header.php';
                                                     class="form-control bg-white border-primary"
                                                     value="<?= htmlspecialchars($datos['imc'] ?? '') ?>" readonly>
                                             </div>
-                                            <div class="col-md-3">
-                                                <label class="form-label small fw-bold">Presión Arterial</label>
+                                            <div class="col-md-2">
+                                                <label class="form-label small fw-bold">Presión Art.</label>
                                                 <input type="text" name="presion_arterial" class="form-control"
                                                     placeholder="120/80"
                                                     value="<?= htmlspecialchars($datos['presion_arterial'] ?? '') ?>">
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class="form-label small fw-bold">F. Cardiaca</label>
+                                                <div class="input-group">
+                                                    <input type="number" name="frecuencia_cardiaca" class="form-control"
+                                                        value="<?= htmlspecialchars($datos['frecuencia_cardiaca'] ?? '') ?>">
+                                                    <span class="input-group-text small px-1">lpm</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class="form-label small fw-bold">Temp.</label>
+                                                <div class="input-group">
+                                                    <input type="number" step="0.1" name="temperatura" class="form-control"
+                                                        value="<?= htmlspecialchars($datos['temperatura'] ?? '') ?>">
+                                                    <span class="input-group-text small px-1">°C</span>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-2">
+                                                <label class="form-label small fw-bold">F. Resp.</label>
+                                                <div class="input-group">
+                                                    <input type="number" name="frecuencia_respiratoria" class="form-control"
+                                                        value="<?= htmlspecialchars($datos['frecuencia_respiratoria'] ?? '') ?>">
+                                                    <span class="input-group-text small px-1">rpm</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class="form-label small fw-bold">Circ. Abdominal</label>
+                                                <div class="input-group">
+                                                    <input type="number" step="0.1" name="circunferencia_abdominal"
+                                                        class="form-control"
+                                                        value="<?= htmlspecialchars($datos['circunferencia_abdominal'] ?? '') ?>">
+                                                    <span class="input-group-text small px-1">cm</span>
+                                                </div>
                                             </div>
                                             <div class="col-md-3">
                                                 <label class="form-label small fw-bold">Glucosa Capilar</label>
