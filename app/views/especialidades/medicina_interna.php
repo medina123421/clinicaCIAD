@@ -391,7 +391,8 @@ include '../../includes/header.php';
                                         <h6 class="fw-bold text-primary mb-3">2. Enfermedades cardiovasculares</h6>
                                         <div class="row g-2">
                                             <div class="col-12">
-                                                <?= renderCheckbox('hta', 'Hipertensión Arterial (HTA)', $datos) ?></div>
+                                                <?= renderCheckbox('hta', 'Hipertensión Arterial (HTA)', $datos) ?>
+                                            </div>
                                             <div class="col-12">
                                                 <?= renderCheckbox('enfermedad_coronaria', 'Enfermedad Coronaria / Angina', $datos) ?>
                                             </div>
@@ -402,7 +403,8 @@ include '../../includes/header.php';
                                                 <?= renderCheckbox('insuficiencia_cardiaca', 'Insuficiencia Cardiaca', $datos) ?>
                                             </div>
                                             <div class="col-12">
-                                                <?= renderCheckbox('dislipidemia', 'Dislipidemia', $datos) ?></div>
+                                                <?= renderCheckbox('dislipidemia', 'Dislipidemia', $datos) ?>
+                                            </div>
                                             <div class="col-12">
                                                 <?= renderCheckbox('enf_vascular_periferica', 'Enfermedad Vascular Periférica', $datos) ?>
                                             </div>
@@ -421,7 +423,8 @@ include '../../includes/header.php';
                                             <div class="col-12"><?= renderCheckbox('proteinuria', 'Proteinuria', $datos) ?>
                                             </div>
                                             <div class="col-12">
-                                                <?= renderCheckbox('nefrolitiasis', 'Nefrolitiasis', $datos) ?></div>
+                                                <?= renderCheckbox('nefrolitiasis', 'Nefrolitiasis', $datos) ?>
+                                            </div>
                                             <div class="col-12">
                                                 <?= renderCheckbox('infecciones_urinarias', 'Infecciones urinarias recurrentes', $datos) ?>
                                             </div>
@@ -435,11 +438,14 @@ include '../../includes/header.php';
                                         <h6 class="fw-bold text-primary mb-3">4. Enfermedades gastrointestinales</h6>
                                         <div class="row g-2">
                                             <div class="col-12">
-                                                <?= renderCheckbox('higado_graso', 'Hígado graso', $datos) ?></div>
+                                                <?= renderCheckbox('higado_graso', 'Hígado graso', $datos) ?>
+                                            </div>
                                             <div class="col-12">
-                                                <?= renderCheckbox('pancreatitis', 'Pancreatitis', $datos) ?></div>
+                                                <?= renderCheckbox('pancreatitis', 'Pancreatitis', $datos) ?>
+                                            </div>
                                             <div class="col-12">
-                                                <?= renderCheckbox('gastroparesia', 'Gastroparesia', $datos) ?></div>
+                                                <?= renderCheckbox('gastroparesia', 'Gastroparesia', $datos) ?>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -456,7 +462,8 @@ include '../../includes/header.php';
                                                 <?= renderCheckbox('neuropatia_periferica_previa', 'Neuropatía periférica previa', $datos) ?>
                                             </div>
                                             <div class="col-12">
-                                                <?= renderCheckbox('amputaciones', 'Amputaciones', $datos) ?></div>
+                                                <?= renderCheckbox('amputaciones', 'Amputaciones', $datos) ?>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -470,13 +477,13 @@ include '../../includes/header.php';
                                                 <?= renderCheckbox('retinopatia_diabetica', 'Retinopatía diabética', $datos) ?>
                                             </div>
                                             <div class="col-12">
-                                                <?= renderCheckbox('nefropatia_diabetica', 'Nefropatía diabética', $datos) ?>
+                                                <?= renderCheckbox('nefropatia_diabetica', 'Nefropatia diabetica /  insuficiensia renal', $datos) ?>
                                             </div>
                                             <div class="col-12">
                                                 <?= renderCheckbox('neuropatia_periferica', 'Neuropatía periférica', $datos) ?>
                                             </div>
                                             <div class="col-12">
-                                                <?= renderCheckbox('neuropatia_autonomica', 'Neuropatía autonómica', $datos) ?>
+                                                <?= renderCheckbox('neuropatia_autonomica', 'Neuropatía autonomica (Gastroparesia, disfunsion erectil, etc)', $datos) ?>
                                             </div>
                                         </div>
                                     </div>
@@ -502,9 +509,11 @@ include '../../includes/header.php';
                                         <h6 class="fw-bold text-primary mb-3">8. Enfermedades infecciosas</h6>
                                         <div class="row g-2">
                                             <div class="col-12">
-                                                <?= renderCheckbox('tuberculosis', 'Tuberculosis (TB)', $datos) ?></div>
+                                                <?= renderCheckbox('tuberculosis', 'Tuberculosis (TB)', $datos) ?>
+                                            </div>
                                             <div class="col-12">
-                                                <?= renderCheckbox('hepatitis_b_c', 'Hepatitis B o C', $datos) ?></div>
+                                                <?= renderCheckbox('hepatitis_b_c', 'Hepatitis B o C', $datos) ?>
+                                            </div>
                                             <div class="col-12">
                                                 <?= renderCheckbox('infecciones_piel', 'Infecciones de piel recurrentes', $datos) ?>
                                             </div>
@@ -728,15 +737,18 @@ include '../../includes/header.php';
                                             <div class="col-6"><?= renderCheckbox('lab_cloro', 'Cloro (Cl)', $datos) ?>
                                             </div>
                                             <div class="col-6">
-                                                <?= renderCheckbox('lab_bicarbonato', 'Bicarbonato', $datos) ?></div>
+                                                <?= renderCheckbox('lab_bicarbonato', 'Bicarbonato', $datos) ?>
+                                            </div>
                                             <div class="col-6"><?= renderCheckbox('lab_calcio', 'Calcio (Ca)', $datos) ?>
                                             </div>
                                             <div class="col-6"><?= renderCheckbox('lab_fosforo', 'Fósforo (P)', $datos) ?>
                                             </div>
                                             <div class="col-6">
-                                                <?= renderCheckbox('lab_magnesio', 'Magnesio (Mg)', $datos) ?></div>
+                                                <?= renderCheckbox('lab_magnesio', 'Magnesio (Mg)', $datos) ?>
+                                            </div>
                                             <div class="col-12">
-                                                <?= renderCheckbox('lab_gasometria', 'Gasometría arterial', $datos) ?></div>
+                                                <?= renderCheckbox('lab_gasometria', 'Gasometría arterial', $datos) ?>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
