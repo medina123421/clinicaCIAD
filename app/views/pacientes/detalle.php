@@ -72,7 +72,7 @@ include '../../includes/header.php';
 ?>
 
 <div class="row mb-4">
-    <div class="col-md-8">
+    <div class="col-md-7">
         <h2><i class="bi bi-person-vcard-fill"></i> Detalle del Paciente</h2>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
@@ -84,7 +84,7 @@ include '../../includes/header.php';
             </ol>
         </nav>
     </div>
-    <div class="col-md-4 text-end">
+    <div class="col-md-5 d-flex flex-wrap justify-content-end align-items-start gap-2">
         <a href="../socioeconomico/editar.php?id=<?= $id_paciente ?>" class="btn btn-info text-white">
             <i class="bi bi-file-earmark-person"></i> Estudio Socioeconómico
         </a>
@@ -118,6 +118,16 @@ include '../../includes/header.php';
                         <td><strong>
                                 <?= htmlspecialchars($paciente['numero_expediente']) ?>
                             </strong></td>
+                    </tr>
+                    <tr>
+                        <th>Protocolo:</th>
+                        <td>
+                            <?php if (($paciente['protocolo'] ?? 'Diabético') === 'Diabético'): ?>
+                                <span class="badge bg-danger">Diabético</span>
+                            <?php else: ?>
+                                <span class="badge bg-warning text-dark">Prediabético</span>
+                            <?php endif; ?>
+                        </td>
                     </tr>
                     <tr>
                         <th>Nombre Completo:</th>
@@ -180,23 +190,27 @@ include '../../includes/header.php';
                             <?= htmlspecialchars($paciente['direccion'] ?? 'No especificada') ?>
                         </td>
                     </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header bg-info text-white">
+                <i class="bi bi-person-exclamation"></i> Contacto de Emergencia
+            </div>
+            <div class="card-body">
+                <table class="table table-borderless mb-0">
                     <tr>
-                        <th>Ciudad:</th>
-                        <td>
-                            <?= htmlspecialchars($paciente['ciudad'] ?? 'No especificada') ?>
-                        </td>
+                        <th width="40%">Nombre:</th>
+                        <td><?= htmlspecialchars($paciente['nombre_emergencia'] ?? 'No registrado') ?></td>
                     </tr>
                     <tr>
-                        <th>Estado:</th>
-                        <td>
-                            <?= htmlspecialchars($paciente['estado'] ?? 'No especificado') ?>
-                        </td>
+                        <th>Teléfono:</th>
+                        <td><?= htmlspecialchars($paciente['telefono_emergencia'] ?? 'No registrado') ?></td>
                     </tr>
                     <tr>
-                        <th>Código Postal:</th>
-                        <td>
-                            <?= htmlspecialchars($paciente['codigo_postal'] ?? 'No especificado') ?>
-                        </td>
+                        <th>Parentesco:</th>
+                        <td><?= htmlspecialchars($paciente['parentesco_emergencia'] ?? 'No registrado') ?></td>
                     </tr>
                 </table>
             </div>
@@ -251,6 +265,14 @@ include '../../includes/header.php';
                                 </td>
                             </tr>
                         <?php endif; ?>
+                        <tr>
+                            <td colspan="2" class="text-center pt-3">
+                                <a href="../especialidades/medicina_interna.php?id_visita=<?= $ultima_visita['id_visita'] ?>"
+                                    class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-stethoscope"></i> Ver Consulta Medicina Interna
+                                </a>
+                            </td>
+                        </tr>
                     </table>
                 <?php else: ?>
                     <p class="text-muted text-center mb-0">No hay visitas registradas.</p>

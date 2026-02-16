@@ -114,6 +114,10 @@ include '../../includes/header.php';
                                         class="btn btn-sm btn-outline-info" title="Ver Paciente">
                                         <i class="bi bi-person-eye"></i>
                                     </a>
+                                    <a href="../especialidades/medicina_interna.php?id_visita=<?= $visita['id_visita'] ?>"
+                                        class="btn btn-sm btn-outline-primary" title="Consulta Medicina Interna">
+                                        <i class="bi bi-stethoscope"></i>
+                                    </a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

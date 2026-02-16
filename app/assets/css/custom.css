@@ -1,10 +1,13 @@
 /* ============================================
-   ESTILOS PERSONALIZADOS - CLÍNICA INVESTLAB
+   ESTILOS PERSONALIZADOS - CIADI
    ============================================ */
 
 /* Variables de colores */
 :root {
-    --primary-color: #0d6efd;
+    --primary-color: #192d8e;
+    /* Logo dark blue */
+    --secondary-color: #0d6efd;
+    /* Logo light blue */
     --success-color: #198754;
     --warning-color: #ffc107;
     --danger-color: #dc3545;
@@ -12,6 +15,11 @@
     --light-bg: #f8f9fa;
     --dark-text: #212529;
 }
+
+.bg-primary {
+    background-color: var(--primary-color) !important;
+}
+
 
 /* Body y layout general */
 body {
@@ -45,7 +53,8 @@ body {
 .card {
     border: none;
     border-radius: 10px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); /* More subtle shadow */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    /* More subtle shadow */
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -127,14 +136,16 @@ body {
 }
 
 /* Formularios */
-.form-control, .form-select {
+.form-control,
+.form-select {
     border-radius: 6px;
     border: 1px solid #ced4da;
     padding: 0.6rem 0.75rem;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.form-control:focus, .form-select:focus {
+.form-control:focus,
+.form-select:focus {
     border-color: var(--primary-color);
     box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
 }
@@ -238,11 +249,11 @@ body {
     .navbar-brand {
         font-size: 1.1rem;
     }
-    
+
     .stat-card .stat-number {
         font-size: 1.5rem;
     }
-    
+
     .table {
         font-size: 0.85rem;
     }
@@ -254,6 +265,7 @@ body {
         opacity: 0;
         transform: translateY(10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -283,27 +295,39 @@ footer {
     border-top: 1px solid #dee2e6;
 }
 
-.bg-pink { background-color: #e83e8c !important; color: white; }
+.bg-pink {
+    background-color: #e83e8c !important;
+    color: white;
+}
 
 /* Login Page Enhanced Design */
 body.login-page {
-    background: linear-gradient(135deg, #e0f2f7 0%, #c8e6c9 100%); /* A subtle, professional gradient */
+    background: linear-gradient(135deg, #e0f2f7 0%, #c8e6c9 100%);
+    /* A subtle, professional gradient */
     display: flex;
-    align-items: center; /* Vertically center the content (the card) */
-    justify-content: center; /* Horizontally center the content (the card) */
-    min-height: 100vh; /* Ensure full viewport height */
-    margin: 0; /* Remove default body margin */
+    align-items: center;
+    /* Vertically center the content (the card) */
+    justify-content: center;
+    /* Horizontally center the content (the card) */
+    min-height: 100vh;
+    /* Ensure full viewport height */
+    margin: 0;
+    /* Remove default body margin */
 }
 
 body.login-page .card {
-    background-color: rgba(255, 255, 255, 0.95); /* Slightly transparent white card */
+    background-color: rgba(255, 255, 255, 0.95);
+    /* Slightly transparent white card */
     border-radius: 15px;
-    padding: 20px; /* Add some internal padding */
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* More pronounced, but still professional shadow */
+    padding: 20px;
+    /* Add some internal padding */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    /* More pronounced, but still professional shadow */
 }
 
 body.login-page .card h2 {
-    color: var(--primary-color); /* Use primary color for the title */
+    color: var(--primary-color);
+    /* Use primary color for the title */
     font-weight: 700;
     margin-bottom: 25px;
     font-size: 1.8rem;
@@ -320,7 +344,8 @@ body.login-page .btn-primary {
 }
 
 body.login-page .btn-primary:hover {
-    background-color: #0b5ed7; /* Darker shade on hover */
+    background-color: #0b5ed7;
+    /* Darker shade on hover */
     border-color: #0a58ca;
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);

@@ -1,6 +1,6 @@
-# Aplicación Web - Clínica InvestLab
+# Aplicación Web - CIADI
 
-Sistema de gestión integral para clínica especializada en diabetes y prediabetes.
+Centro Integral de Atención a la Diabetes.
 
 ## 🚀 Tecnologías Utilizadas
 

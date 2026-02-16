@@ -5,7 +5,7 @@
  */
 
 // Título de la página (puede ser sobrescrito)
-$page_title = $page_title ?? 'Clínica InvestLab';
+$page_title = $page_title ?? 'CIADI';
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -15,17 +15,23 @@ $page_title = $page_title ?? 'Clínica InvestLab';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>
-        <?= htmlspecialchars($page_title) ?> - Clínica InvestLab
+        <?= htmlspecialchars($page_title) ?> - CIADI
     </title>
 
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap 5 JS Bundle (incluye Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    <!-- jQuery (Necesario para scripts en línea) -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 
     <!-- Custom CSS -->
     <link href="/app/assets/css/custom.css" rel="stylesheet">
@@ -36,7 +42,8 @@ $page_title = $page_title ?? 'Clínica InvestLab';
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container-fluid">
             <a class="navbar-brand" href="/app/index.php">
-                <i class="bi bi-heart-pulse-fill"></i> Clínica InvestLab
+                <img src="/app/assets/img/logo_ciadi.png" alt="CIADI" height="30" class="d-inline-block align-top me-2">
+                CIADI
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>

@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acceso - Clínica InvestLab</title>
+    <title>Acceso - CIADI</title>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <!-- Bootstrap 5 -->
@@ -57,16 +57,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <style>
         :root {
-            --primary-color: #0d6efd;
-            --secondary-color: #6c757d;
-            --clinic-teal: #008fa1;
-            --clinic-blue: #0056b3;
-            --bg-gradient: linear-gradient(135deg, #e0f7fa 0%, #ffffff 100%);
+            --primary-color: #192d8e;
+            --secondary-color: #0d6efd;
+            --bg-gradient: linear-gradient(135deg, #192d8e 0%, #0d6efd 50%, #f0f4ff 100%);
         }
 
         body {
             font-family: 'Inter', sans-serif;
             background: var(--bg-gradient);
+            background-attachment: fixed;
             height: 100vh;
             display: flex;
             align-items: center;
@@ -77,24 +76,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .login-card {
             border: none;
             border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
             overflow: hidden;
             max-width: 450px;
-            width: 100%;
-            background: #fff;
+            width: 90%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
         }
 
         .login-header {
-            background: linear-gradient(135deg, var(--clinic-teal), var(--clinic-blue));
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             padding: 40px 20px;
             text-align: center;
             color: #fff;
         }
 
-        .login-header i {
-            font-size: 3rem;
-            margin-bottom: 10px;
-            display: block;
+        .login-header img {
+            max-width: 120px;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+            background: white;
+            padding: 10px;
+            border-radius: 50%;
         }
 
         .login-header h2 {
@@ -121,8 +124,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .form-control:focus {
-            border-color: var(--clinic-teal);
-            box-shadow: 0 0 0 0.25rem rgba(0, 143, 161, 0.1);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(25, 45, 142, 0.1);
         }
 
         .input-group-text {
@@ -132,12 +135,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: #6c757d;
         }
 
-        .input-group .form-control {
+        .input-group .form-control:not(:last-child) {
+            border-radius: 0;
+        }
+
+        .input-group .btn-outline-secondary {
             border-radius: 0 10px 10px 0;
+            border: 1px solid #dee2e6;
+            border-left: none;
+            background-color: #f8f9fa;
+            color: #6c757d;
+        }
+
+        .input-group .btn-outline-secondary:hover {
+            background-color: #e9ecef;
+            color: var(--primary-color);
         }
 
         .btn-login {
-            background: linear-gradient(135deg, var(--clinic-teal), var(--clinic-blue));
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             border: none;
             border-radius: 10px;
             padding: 12px;
@@ -149,7 +165,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         .btn-login:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 143, 161, 0.3);
+            box-shadow: 0 5px 15px rgba(25, 45, 142, 0.3);
             color: #fff;
         }
 
@@ -172,8 +188,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <div class="login-card">
         <div class="login-header">
-            <i class="bi bi-hospital"></i>
-            <h2>Clínica InvestLab</h2>
+            <img src="app/assets/img/logo_ciadi.png" alt="Logo CIADI">
+            <h2>CIADI</h2>
             <p class="mb-0 opacity-75">Panel de Gestión Médica</p>
         </div>
 
@@ -199,7 +215,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label class="form-label">Contraseña</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                        <input type="password" name="password" class="form-control" placeholder="••••••••" required>
+                        <input type="password" name="password" id="password" class="form-control" placeholder="••••••••"
+                            required>
+                        <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                            <i class="bi bi-eye"></i>
+                        </button>
                     </div>
                 </div>
 
@@ -211,13 +231,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </form>
 
             <div class="footer-text">
-                &copy; <?= date('Y') ?> Clínica InvestLab. Todos los derechos reservados.
+                &copy; <?= date('Y') ?> CIADI. Todos los derechos reservados.
             </div>
         </div>
     </div>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const togglePassword = document.querySelector('#togglePassword');
+        const password = document.querySelector('#password');
+
+        togglePassword.addEventListener('click', function (e) {
+            // toggle the type attribute
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+            // toggle the eye / eye slash icon
+            this.querySelector('i').classList.toggle('bi-eye');
+            this.querySelector('i').classList.toggle('bi-eye-slash');
+        });
+    </script>
 </body>
 
 </html>

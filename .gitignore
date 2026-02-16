@@ -1,0 +1,16 @@
+# XAMPP/PHP
+/vendor/
+/.idea/
+/.vscode/
+*.log
+*.tmp
+*.bak
+
+# Application specific
+/app/config/db.php
+/uploads/*
+!/uploads/.gitkeep
+
+# OS generated files
+.DS_Store
+Thumbs.db

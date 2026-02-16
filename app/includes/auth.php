@@ -7,10 +7,21 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// Tentar detectar la ruta base si no existe
+$base_path = str_replace('\\', '/', dirname(dirname(__DIR__)));
+$document_root = str_replace('\\', '/', $_SERVER['DOCUMENT_ROOT']);
+$folder_name = str_replace($document_root, '', $base_path);
+
+// Asegurar que comience con / si no está vacío
+if (!empty($folder_name) && $folder_name[0] !== '/') {
+    $folder_name = '/' . $folder_name;
+}
+
 // Verificar si el usuario está autenticado
 if (!isset($_SESSION['usuario_id']) || !isset($_SESSION['usuario_nombre'])) {
-    // Redirigir al login en la raíz
-    header('Location: login.php');
+    // Redirigir al login en la raíz (usando ruta absoluta relativa al host)
+    $login_path = ($folder_name ?: '') . '/login.php';
+    header("Location: $login_path");
     exit();
 }
 

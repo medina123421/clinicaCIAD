@@ -43,7 +43,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'estado' => trim($_POST['estado'] ?? ''),
         'codigo_postal' => trim($_POST['codigo_postal'] ?? ''),
         'tipo_sangre' => $_POST['tipo_sangre'] ?? null,
-        'alergias' => trim($_POST['alergias'] ?? '')
+        'alergias' => trim($_POST['alergias'] ?? ''),
+        'protocolo' => $_POST['protocolo'] ?? 'Diabético',
+        'nombre_emergencia' => trim($_POST['nombre_emergencia'] ?? ''),
+        'telefono_emergencia' => trim($_POST['telefono_emergencia'] ?? ''),
+        'parentesco_emergencia' => trim($_POST['parentesco_emergencia'] ?? '')
     ];
 
     try {
@@ -197,10 +201,45 @@ include '../../includes/header.php';
 
     <div class="card mt-4">
         <div class="card-header">
+            <i class="bi bi-person-exclamation"></i> Contacto de Emergencia
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label for="nombre_emergencia" class="form-label">Nombre del Contacto</label>
+                    <input type="text" class="form-control" id="nombre_emergencia" name="nombre_emergencia"
+                        value="<?= htmlspecialchars($paciente['nombre_emergencia'] ?? '') ?>">
+                </div>
+                <div class="col-md-4">
+                    <label for="telefono_emergencia" class="form-label">Teléfono del Contacto</label>
+                    <input type="tel" class="form-control" id="telefono_emergencia" name="telefono_emergencia"
+                        value="<?= htmlspecialchars($paciente['telefono_emergencia'] ?? '') ?>"
+                        placeholder="5551234567">
+                </div>
+                <div class="col-md-4">
+                    <label for="parentesco_emergencia" class="form-label">Parentesco</label>
+                    <input type="text" class="form-control" id="parentesco_emergencia" name="parentesco_emergencia"
+                        value="<?= htmlspecialchars($paciente['parentesco_emergencia'] ?? '') ?>"
+                        placeholder="Ej. Padre, Cónyuge, Amigo">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-header">
             <i class="bi bi-clipboard2-pulse"></i> Información Médica
         </div>
         <div class="card-body">
             <div class="row g-3">
+                <div class="col-md-6">
+                    <label for="protocolo" class="form-label">Protocolo</label>
+                    <select class="form-select" id="protocolo" name="protocolo">
+                        <option value="Diabético" <?= ($paciente['protocolo'] ?? '') == 'Diabético' ? 'selected' : '' ?>>
+                            Diabético</option>
+                        <option value="Prediabético" <?= ($paciente['protocolo'] ?? '') == 'Prediabético' ? 'selected' : '' ?>>Prediabético</option>
+                    </select>
+                </div>
                 <div class="col-md-12">
                     <label for="alergias" class="form-label">Alergias Conocidas</label>
                     <textarea class="form-control" id="alergias" name="alergias" rows="3"

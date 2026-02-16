@@ -21,7 +21,7 @@ class Paciente
     {
         $query = "SELECT id_paciente, numero_expediente, 
                   CONCAT(nombre, ' ', apellido_paterno, ' ', IFNULL(apellido_materno, '')) as nombre_completo,
-                  edad, sexo, telefono, email, fecha_registro
+                  edad, sexo, telefono, email, protocolo, fecha_registro
                   FROM " . $this->table_name . "
                   WHERE activo = 1";
 
@@ -70,11 +70,13 @@ class Paciente
         $query = "INSERT INTO " . $this->table_name . "
                   (numero_expediente, nombre, apellido_paterno, apellido_materno, 
                    fecha_nacimiento, sexo, telefono, email, direccion, ciudad, estado, 
-                   codigo_postal, tipo_sangre, alergias, created_by)
+                   codigo_postal, tipo_sangre, alergias, protocolo, nombre_emergencia,
+                   telefono_emergencia, parentesco_emergencia, created_by)
                   VALUES 
                   (:numero_expediente, :nombre, :apellido_paterno, :apellido_materno,
                    :fecha_nacimiento, :sexo, :telefono, :email, :direccion, :ciudad, :estado,
-                   :codigo_postal, :tipo_sangre, :alergias, :created_by)";
+                   :codigo_postal, :tipo_sangre, :alergias, :protocolo, :nombre_emergencia,
+                   :telefono_emergencia, :parentesco_emergencia, :created_by)";
 
         $stmt = $this->conn->prepare($query);
 
@@ -93,6 +95,10 @@ class Paciente
         $stmt->bindParam(':codigo_postal', $datos['codigo_postal']);
         $stmt->bindParam(':tipo_sangre', $datos['tipo_sangre']);
         $stmt->bindParam(':alergias', $datos['alergias']);
+        $stmt->bindParam(':protocolo', $datos['protocolo']);
+        $stmt->bindParam(':nombre_emergencia', $datos['nombre_emergencia']);
+        $stmt->bindParam(':telefono_emergencia', $datos['telefono_emergencia']);
+        $stmt->bindParam(':parentesco_emergencia', $datos['parentesco_emergencia']);
         $stmt->bindParam(':created_by', $usuario_id, PDO::PARAM_INT);
 
         if ($stmt->execute()) {
@@ -120,7 +126,11 @@ class Paciente
                       estado = :estado,
                       codigo_postal = :codigo_postal,
                       tipo_sangre = :tipo_sangre,
-                      alergias = :alergias
+                      alergias = :alergias,
+                      protocolo = :protocolo,
+                      nombre_emergencia = :nombre_emergencia,
+                      telefono_emergencia = :telefono_emergencia,
+                      parentesco_emergencia = :parentesco_emergencia
                   WHERE id_paciente = :id";
 
         $stmt = $this->conn->prepare($query);
@@ -139,6 +149,10 @@ class Paciente
         $stmt->bindParam(':codigo_postal', $datos['codigo_postal']);
         $stmt->bindParam(':tipo_sangre', $datos['tipo_sangre']);
         $stmt->bindParam(':alergias', $datos['alergias']);
+        $stmt->bindParam(':protocolo', $datos['protocolo']);
+        $stmt->bindParam(':nombre_emergencia', $datos['nombre_emergencia']);
+        $stmt->bindParam(':telefono_emergencia', $datos['telefono_emergencia']);
+        $stmt->bindParam(':parentesco_emergencia', $datos['parentesco_emergencia']);
 
         return $stmt->execute();
     }
@@ -159,5 +173,16 @@ class Paciente
         $siguiente = ($result['ultimo'] ?? 0) + 1;
 
         return sprintf('EXP-%s-%04d', $year, $siguiente);
+    }
+
+    /**
+     * Borrado lógico de paciente
+     */
+    public function eliminar($id)
+    {
+        $query = "UPDATE " . $this->table_name . " SET activo = 0 WHERE id_paciente = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        return $stmt->execute();
     }
 }
