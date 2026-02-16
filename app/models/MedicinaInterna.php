@@ -187,6 +187,12 @@ class MedicinaInterna
             'control_adherencia',
             'control_problemas_medicamentos',
             'control_tecnica_insulina',
+            'control_glucemia_hb1ac_reciente',
+            'control_glucemia_glucometrias_diarias',
+            'control_glucemia_hipoglucemias_recientes',
+            'control_glucemia_hiperglucemias_sintomaticas',
+            'control_glucemia_cambios_medicamentos',
+            'control_glucemia_aplicacion_insulina_adecuada',
 
             // Revisiones
             'rev_pies_detalles',
@@ -196,6 +202,12 @@ class MedicinaInterna
             'rev_macro_coronaria',
             'rev_macro_claudicacion',
             'rev_riesgo_cv',
+            'med_revision_completa',
+            'med_ajuste_orales',
+            'med_ajuste_insulina',
+            'med_ajuste_estatina_hta',
+            'med_evaluar_cambio',
+            'prog_estudios_pendientes',
 
             'alimentacion_adecuada',
             'actividad_fisica',
@@ -385,6 +397,12 @@ class MedicinaInterna
             'control_hiperglucemias_sintomaticas',
             'control_adherencia',
             'control_tecnica_insulina',
+            'control_glucemia_hb1ac_reciente',
+            'control_glucemia_glucometrias_diarias',
+            'control_glucemia_hipoglucemias_recientes',
+            'control_glucemia_hiperglucemias_sintomaticas',
+            'control_glucemia_cambios_medicamentos',
+            'control_glucemia_aplicacion_insulina_adecuada',
 
             'rev_neuropatia_monofilamento',
             'rev_renal_laboratorios',

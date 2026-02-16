@@ -874,79 +874,199 @@ include '../../includes/header.php';
                                     </div>
                                 </div>
 
-                                <!-- Control Glucémico -->
-                                <div class="col-md-6">
-                                    <div class="medical-section h-100">
-                                        <h6 class="fw-bold text-primary border-bottom pb-2">Control Glucémico y Bitácora
-                                        </h6>
-                                        <div class="row g-3">
-                                            <div class="col-12">
-                                                <?= renderCheckbox('control_bitacora', 'Cuenta con bitácora de monitoreo', $datos) ?>
-                                            </div>
-                                            <div class="col-12">
-                                                <?= renderCheckbox('control_hipoglucemias', 'Presenta hipoglucemias recurrentes', $datos) ?>
-                                                <div id="control_hipoglucemias_detalles_container" class="mt-2 ps-4"
-                                                    style="<?= ($datos['control_hipoglucemias'] ?? 0) ? '' : 'display:none' ?>">
-                                                    <textarea name="control_hipoglucemias_detalles"
-                                                        class="form-control form-control-sm" rows="2"
-                                                        placeholder="Frecuencia, horario, síntomas..."><?= htmlspecialchars($datos['control_hipoglucemias_detalles'] ?? '') ?></textarea>
+                                <div class="row g-4">
+                                    <!-- 2. Control de la Diabetes -->
+                                    <div class="col-md-6">
+                                        <div class="medical-section h-100">
+                                            <h6 class="fw-bold text-primary mb-3">2. Control de la Diabetes</h6>
+                                            <div class="row g-2">
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('control_glucemia_hb1ac_reciente', 'Revisión de valores recientes de HbA1c', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('control_glucemia_glucometrias_diarias', 'Revisión de glucometrías diarias o bitácora del paciente', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('control_glucemia_hipoglucemias_recientes', 'Hipoglucemias recientes (si/no y frecuencia)', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('control_glucemia_hiperglucemias_sintomaticas', 'Hiperglucemias sintomáticas', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('control_glucemia_cambios_medicamentos', 'Adherencia al tratamiento / Cambios o problemas con medicamentos', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('control_glucemia_aplicacion_insulina_adecuada', 'Aplicación adecuada de insulina (técnica, dosis, horarios)', $datos) ?>
                                                 </div>
                                             </div>
-                                            <div class="col-12">
-                                                <?= renderCheckbox('control_hiperglucemias_sintomaticas', 'Hiperglucemias sintomáticas', $datos) ?>
+                                        </div>
+                                    </div>
+
+                                    <!-- 3. Revisión de Complicaciones -->
+                                    <div class="col-md-6">
+                                        <div class="medical-section h-100">
+                                            <h6 class="fw-bold text-primary mb-3">3. Revisión de Complicaciones</h6>
+
+                                            <p class="small fw-bold text-secondary mb-1">A. Complicaciones Microvasculares
+                                            </p>
+                                            <div class="row g-1 mb-3">
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('pie_diabetico', 'Revisión de pies (úlcera, callosidades, sensibilidad, pulsos)', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('rev_neuropatia_monofilamento', 'Neuropatía (monofilamento si es posible)', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('rev_renal_laboratorios', 'Revisión de la función renal (últimos laboratorios)', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('rev_vision_borrosa', 'Preguntar por visión borrosa / última revisión oftalmológica', $datos) ?>
+                                                </div>
                                             </div>
-                                            <div class="col-12">
-                                                <?= renderCheckbox('control_adherencia', 'Buena adherencia al tratamiento', $datos) ?>
+
+                                            <p class="small fw-bold text-secondary mb-1">B. Complicaciones Macrovasculares
+                                            </p>
+                                            <div class="row g-1">
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('rev_macro_coronaria', 'Signos o síntomas de enfermedad coronaria', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('rev_macro_claudicacion', 'Claudicación intermitente', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('rev_riesgo_cv', 'Revisión de riesgo cardiovascular', $datos) ?>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <!-- Revisiones Especializadas -->
-                                <div class="col-md-6">
-                                    <div class="medical-section h-100">
-                                        <h6 class="fw-bold text-primary border-bottom pb-2">Revisiones de Complicaciones
-                                        </h6>
-                                        <div class="row g-3">
-                                            <div class="col-12">
-                                                <?= renderCheckbox('rev_neuropatia_monofilamento', 'Examen con monofilamento (Sensibilidad)', $datos) ?>
-                                            </div>
-                                            <div class="col-12">
-                                                <?= renderCheckbox('rev_renal_laboratorios', 'Revisión de función renal (Microalb/TFG)', $datos) ?>
-                                            </div>
-                                            <div class="col-12">
-                                                <?= renderTextSection('Hallazgos en Pies', 'pie_diabetico', 'rev_pies_detalles', $datos) ?>
-                                            </div>
-                                            <div class="col-12">
-                                                <?= renderCheckbox('rev_riesgo_cv', 'Evaluación de riesgo CV (SCORE/Framingham)', $datos) ?>
+                                    <!-- 4. Laboratorios Relevantes -->
+                                    <div class="col-md-6">
+                                        <div class="medical-section h-100">
+                                            <h6 class="fw-bold text-primary mb-3">4. Laboratorios Relevantes (verificación
+                                                de estudios recientes)</h6>
+                                            <div class="row g-2">
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('lab_glucosa_ayunas', 'Glucosa', $datos) ?></div>
+                                                <div class="col-12"><?= renderCheckbox('lab_hba1c', 'HbA1c', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('lab_lipidos', 'Perfil lipídico', $datos) ?></div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('lab_creatinina_tfg', 'Creatinina y TFG', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('lab_microalbuminuria', 'Microalbuminuria', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('lab_ego_aplica', 'EGO (si aplica)', $datos) ?></div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('lab_funcion_hepatica_especifica', 'Función hepática (en pacientes con tratamientos específicos)', $datos) ?>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <!-- Estilo de Vida y Salud Mental -->
-                                <div class="col-md-12">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="medical-section">
-                                                <h6 class="fw-bold text-success mb-3"><i class="bi bi-bicycle"></i> Estilo
-                                                    de Vida</h6>
-                                                <?= renderCheckbox('alimentacion_adecuada', 'Alimentación saludable', $datos) ?>
-                                                <?= renderCheckbox('actividad_fisica', 'Actividad física regular', $datos) ?>
-                                                <?= renderCheckbox('horarios_comida_regulares', 'Horarios de comida regulares', $datos) ?>
-                                                <?= renderCheckbox('tabaquismo', 'Tabaquismo activo', $datos) ?>
+                                    <!-- 5. Medicación y Tratamiento -->
+                                    <div class="col-md-6">
+                                        <div class="medical-section h-100">
+                                            <h6 class="fw-bold text-primary mb-3">5. Medicación y Tratamiento</h6>
+                                            <div class="row g-2">
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('med_revision_completa', 'Revisión completa de medicamentos en uso', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('med_ajuste_orales', 'Ajustes necesarios de antidiabéticos orales', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('med_ajuste_insulina', 'Ajustes necesarios de insulina', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('med_ajuste_estatina_hta', 'Revisión de estatina o antihipertensivo si está indicado', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('med_evaluar_cambio', 'Evaluar necesidad de añadir o retirar medicamentos', $datos) ?>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
-                                            <div class="medical-section">
-                                                <h6 class="fw-bold text-info mb-3"><i class="bi bi-mortarboard"></i>
-                                                    Educación y Psico-Social</h6>
-                                                <?= renderCheckbox('educacion_diabetologica', 'Recibió educación diabetológica', $datos) ?>
-                                                <?= renderCheckbox('tecnica_insulina', 'Técnica de inyección correcta', $datos) ?>
-                                                <?= renderCheckbox('revision_metas', 'Revisión de metas terapéuticas', $datos) ?>
-                                                <?= renderCheckbox('apoyo_familiar_social', 'Cuenta con apoyo familiar/social', $datos) ?>
+                                    </div>
+
+                                    <!-- 6. Estilo de Vida -->
+                                    <div class="col-md-6">
+                                        <div class="medical-section h-100">
+                                            <h6 class="fw-bold text-primary mb-3">6. Estilo de Vida</h6>
+                                            <div class="row g-2">
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('alimentacion_adecuada', 'Alimentación / adherencia a plan nutricional', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('actividad_fisica', 'Actividad física', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('consumo_alcohol', 'Consumo de alcohol', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('tabaquismo', 'Tabaquismo', $datos) ?></div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('horarios_comida_regulares', 'Horarios de comida', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('educacion_diabetologica', 'Educación diabetológica (pendiente o actualizada)', $datos) ?>
+                                                </div>
                                             </div>
                                         </div>
+                                    </div>
+
+                                    <!-- 7. Salud Mental y Bienestar -->
+                                    <div class="col-md-6">
+                                        <div class="medical-section h-100">
+                                            <h6 class="fw-bold text-primary mb-3">7. Salud Mental y Bienestar</h6>
+                                            <div class="row g-2">
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('estado_animo', 'Estado de ánimo', $datos) ?></div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('sintomas_ansiedad_depresion', 'Síntomas de ansiedad o depresión', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('estres_enfermedad', 'Estrés relacionado con la enfermedad', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('apoyo_familiar_social', 'Apoyo familiar o social', $datos) ?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 8. Educación y Prevención -->
+                                    <div class="col-md-12">
+                                        <div class="medical-section">
+                                            <h6 class="fw-bold text-primary mb-3">8. Educación y Prevención</h6>
+                                            <div class="row g-2">
+                                                <div class="col-md-6">
+                                                    <?= renderCheckbox('tecnica_insulina', 'Técnica de administración de insulina (si usa)', $datos) ?>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <?= renderCheckbox('revision_sitio_inyeccion', 'Revisión de sitio de inyección (lipodistrofias)', $datos) ?>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <?= renderCheckbox('prevencion_hipoglucemia', 'Prevención de hipoglucemia', $datos) ?>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <?= renderCheckbox('cuidado_pies', 'Cuidado de pies', $datos) ?></div>
+                                                <div class="col-md-6">
+                                                    <?= renderCheckbox('revision_metas', 'Revisión de metas del tratamiento', $datos) ?>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <?= renderCheckbox('prog_estudios_pendientes', 'Programar estudios pendientes (oftalmo, laboratorios, etc.)', $datos) ?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12 mt-3">
+                                        <label class="form-label fw-bold">Plan Médico, Conducta y Próximos Pasos</label>
+                                        <textarea name="observaciones_adicionales" class="form-control" rows="5"
+                                            placeholder="Escriba el plan detallado, cambios en dosis, solicitud de exámenes..."><?= htmlspecialchars($datos['observaciones_adicionales'] ?? '') ?></textarea>
                                     </div>
                                 </div>
 
