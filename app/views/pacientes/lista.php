@@ -113,7 +113,11 @@ include '../../includes/header.php';
                                 <td>
                                     <div class="d-flex gap-1">
                                         <a href="detalle.php?id=<?= $paciente['id_paciente'] ?>"
-                                            class="btn btn-info btn-sm text-white" title="Ver Expediente del Paciente"
+                                            class="btn btn-info btn-sm text-white" title="Ver Detalle" data-bs-toggle="tooltip">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="historial.php?id=<?= $paciente['id_paciente'] ?>"
+                                            class="btn btn-primary btn-sm" title="Expediente de Paciente"
                                             data-bs-toggle="tooltip">
                                             <i class="bi bi-person-bounding-box"></i>
                                         </a>
