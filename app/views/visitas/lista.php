@@ -53,6 +53,17 @@ include '../../includes/header.php';
     </div>
 </div>
 
+<!-- Búsqueda -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="search-box">
+            <i class="bi bi-search"></i>
+            <input type="text" class="form-control" id="visitaSearchInput"
+                placeholder="Buscar por paciente o número de expediente...">
+        </div>
+    </div>
+</div>
+
 <div class="card shadow-sm">
     <div class="card-body">
         <?php if (count($visitas) > 0): ?>
@@ -131,5 +142,21 @@ include '../../includes/header.php';
         <?php endif; ?>
     </div>
 </div>
+
+<script>
+    $(document).ready(function () {
+        const searchDebounce = debounce(function (searchTerm) {
+            searchAjax(
+                '../../ajax/buscar_visitas.php',
+                searchTerm,
+                'table tbody'
+            );
+        }, 500);
+
+        $('#visitaSearchInput').on('keyup', function () {
+            searchDebounce($(this).val());
+        });
+    });
+</script>
 
 <?php include '../../includes/footer.php'; ?>

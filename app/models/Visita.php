@@ -92,4 +92,39 @@ class Visita
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    /**
+     * Obtener todas las visitas con datos de paciente y doctor
+     */
+    public function obtenerTodas($search = '', $limit = 50)
+    {
+        $query = "SELECT v.*, 
+                  CONCAT(p.nombre, ' ', p.apellido_paterno, ' ', IFNULL(p.apellido_materno, '')) as paciente_nombre,
+                  p.numero_expediente,
+                  CONCAT(u.nombre, ' ', u.apellido_paterno) as doctor_nombre
+                  FROM " . $this->table_name . " v
+                  JOIN pacientes p ON v.id_paciente = p.id_paciente
+                  JOIN usuarios u ON v.id_doctor = u.id_usuario";
+
+        if (!empty($search)) {
+            $query .= " WHERE p.nombre LIKE :search 
+                        OR p.apellido_paterno LIKE :search 
+                        OR p.numero_expediente LIKE :search
+                        OR v.motivo_consulta LIKE :search";
+        }
+
+        $query .= " ORDER BY v.fecha_visita DESC LIMIT :limit";
+
+        $stmt = $this->conn->prepare($query);
+
+        if (!empty($search)) {
+            $searchTerm = "%$search%";
+            $stmt->bindParam(':search', $searchTerm);
+        }
+
+        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

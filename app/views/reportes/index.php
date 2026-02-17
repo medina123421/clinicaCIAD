@@ -61,6 +61,17 @@ include '../../includes/header.php';
     </div>
 </div>
 
+<!-- Búsqueda en Tabla -->
+<div class="row mb-3">
+    <div class="col-md-4">
+        <div class="search-box">
+            <i class="bi bi-search"></i>
+            <input type="text" class="form-control" id="reporteSearchInput"
+                placeholder="Filtrar resultados por paciente o expediente...">
+        </div>
+    </div>
+</div>
+
 <!-- Tabla de Resultados -->
 <div class="table-responsive">
     <table class="table table-striped table-hover align-middle">
@@ -116,4 +127,15 @@ include '../../includes/header.php';
     </table>
 </div>
 
+<script>
+$(document).ready(function() {
+    $("#reporteSearchInput").on("keyup", function() {
+        const value = $(this).val().toLowerCase();
+        $("table tbody tr").filter(function() {
+            var text = $(this).text().toLowerCase();
+            $(this).toggle(text.indexOf(value) > -1);
+        });
+    });
+});
+</script>
 <?php include '../../includes/footer.php'; ?>
