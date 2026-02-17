@@ -102,7 +102,7 @@ include '../../includes/header.php';
                     <input class="form-control" list="datalistOptions" id="busqueda_paciente"
                         placeholder="Escriba nombre o expediente..."
                         value="<?= $paciente_preseleccionado ? htmlspecialchars($paciente_preseleccionado['nombre'] . ' ' . $paciente_preseleccionado['apellido_paterno']) : '' ?>"
-                        <?= $paciente_preseleccionado ? 'readonly' : '' ?> required>
+                        <?= $paciente_preseleccionado ? 'readonly' : '' ?> autocomplete="off" required>
                     <datalist id="datalistOptions">
                         <?php foreach ($pacientes as $paciente): ?>
                             <option data-id="<?= $paciente['id_paciente'] ?>"

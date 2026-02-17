@@ -228,7 +228,8 @@ include '../../includes/header.php';
                 <div class="row">
                     <div class="col-md-6">
                         <label class="form-label">Buscar Paciente</label>
-                        <input class="form-control" list="datalistOptions" id="busqueda_paciente" required>
+                        <input class="form-control" list="datalistOptions" id="busqueda_paciente" autocomplete="off"
+                            required>
                         <datalist id="datalistOptions">
                             <?php foreach ($pacientes as $paciente): ?>
                                 <option data-id="<?= $paciente['id_paciente'] ?>"
