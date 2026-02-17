@@ -11,6 +11,7 @@ require_once '../../models/Visita.php';
 require_once '../../models/Paciente.php';
 
 $id_visita = $_GET['id_visita'] ?? null;
+$id_paciente = $_GET['id_paciente'] ?? null;
 $message = '';
 $message_type = '';
 
@@ -46,20 +47,28 @@ if ($id_visita) {
     $datos = $medicinaInterna->obtenerPorVisita($id_visita) ?: [];
     $visita = $visitaModel->obtenerPorId($id_visita);
     if ($visita) {
-        $paciente = $pacienteModel->obtenerPorId($visita['id_paciente']);
+        $id_paciente = $visita['id_paciente'];
     }
-} else {
-    // Si no hay visita, obtener visitas recientes para mostrar una lista de selección
-    $query_recent = "SELECT v.*, 
-                    CONCAT(p.nombre, ' ', p.apellido_paterno, ' ', IFNULL(p.apellido_materno, '')) as paciente_nombre,
-                    p.numero_expediente
-                    FROM visitas v
-                    JOIN pacientes p ON v.id_paciente = p.id_paciente
-                    ORDER BY v.fecha_visita DESC
-                    LIMIT 10";
-    $stmt_recent = $db->prepare($query_recent);
-    $stmt_recent->execute();
-    $visitas_recientes = $stmt_recent->fetchAll(PDO::FETCH_ASSOC);
+}
+
+if ($id_paciente) {
+    $paciente = $pacienteModel->obtenerPorId($id_paciente);
+    // Si no cargamos datos por visita, intentamos cargar los últimos datos del paciente para pre-poblar o editar
+    if (empty($datos)) {
+        $datos = $medicinaInterna->obtenerPorPaciente($id_paciente) ?: [];
+    }
+}
+
+if (!$id_visita && !$id_paciente) {
+    // Si no hay visita ni paciente, obtener todos los pacientes activos para selección
+    $query_pacientes = "SELECT id_paciente, numero_expediente, 
+                        CONCAT(nombre, ' ', apellido_paterno, ' ', IFNULL(apellido_materno, '')) as nombre_completo
+                        FROM pacientes 
+                        WHERE activo = 1 
+                        ORDER BY nombre ASC";
+    $stmt_pacientes = $db->prepare($query_pacientes);
+    $stmt_pacientes->execute();
+    $lista_pacientes = $stmt_pacientes->fetchAll(PDO::FETCH_ASSOC);
 }
 
 $page_title = 'Consulta Medicina Interna';
@@ -219,95 +228,69 @@ include '../../includes/header.php';
         </div>
     <?php endif; ?>
 
-    <?php if (!$id_visita): ?>
-        <div class="row">
-            <div class="col-md-5">
+    <?php if (!$id_visita && !$id_paciente): ?>
+        <div class="row justify-content-center">
+            <div class="col-md-8">
                 <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-header bg-primary text-white">
-                        <i class="bi bi-search"></i> Buscar Paciente para Consulta
+                    <div class="card-header bg-primary text-white d-flex align-items-center">
+                        <i class="bi bi-person-plus-fill me-2 fs-5"></i>
+                        <span>Seleccionar Paciente para Consulta</span>
                     </div>
-                    <div class="card-body">
-                        <p class="text-muted small">Busque al paciente para ver sus visitas y comenzar la consulta de
-                            medicina interna.</p>
-                        <div class="search-box mb-3">
-                            <i class="bi bi-search"></i>
-                            <input type="text" class="form-control" id="patientSearchInput"
-                                placeholder="Nombre o expediente...">
+                    <div class="card-body p-4">
+                        <p class="text-muted mb-4">Busque y seleccione al paciente para realizar o actualizar su registro de Medicina Interna de forma directa.</p>
+                        <div class="search-box mb-4">
+                            <i class="bi bi-search text-muted"></i>
+                            <input type="text" class="form-control form-control-lg border-primary border-opacity-25" 
+                                   id="patientSelectionInput" placeholder="Buscar por nombre o número de expediente...">
                         </div>
-                        <div id="patientSearchResults" class="list-group list-group-flush"
-                            style="max-height: 300px; overflow-y: auto;">
-                            <!-- AJAX results here -->
-                            <div class="text-center py-3 text-muted">
-                                <i class="bi bi-person-fill-gear fs-2 d-block mb-2"></i>
-                                <small>Escriba para buscar</small>
-                            </div>
+                        
+                        <div id="patientSelectionList" class="list-group list-group-flush shadow-sm rounded-3 border" style="max-height: 400px; overflow-y: auto;">
+                            <?php foreach ($lista_pacientes as $p): ?>
+                                <a href="?id_paciente=<?= $p['id_paciente'] ?>" 
+                                   class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3 patient-item"
+                                   data-search="<?= strtolower($p['nombre_completo'] . ' ' . $p['numero_expediente']) ?>">
+                                    <div>
+                                        <div class="fw-bold fs-6"><?= htmlspecialchars($p['nombre_completo']) ?></div>
+                                        <small class="text-muted"><i class="bi bi-hash"></i> Exp: <?= htmlspecialchars($p['numero_expediente']) ?></small>
+                                    </div>
+                                    <span class="btn btn-outline-primary btn-sm rounded-pill px-3">
+                                        Seleccionar <i class="bi bi-chevron-right ms-1"></i>
+                                    </span>
+                                </a>
+                            <?php endforeach; ?>
                         </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-7">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-dark text-white">
-                        <i class="bi bi-clock-history"></i> Visitas Recientes
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="table table-hover mb-0 align-middle">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Fecha</th>
-                                        <th>Paciente</th>
-                                        <th>Acción</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php if (count($visitas_recientes) > 0): ?>
-                                        <?php foreach ($visitas_recientes as $v): ?>
-                                            <tr>
-                                                <td>
-                                                    <div class="fw-bold"><?= date('d/m/Y', strtotime($v['fecha_visita'])) ?></div>
-                                                    <small
-                                                        class="text-muted"><?= date('H:i', strtotime($v['fecha_visita'])) ?></small>
-                                                </td>
-                                                <td>
-                                                    <div><?= htmlspecialchars($v['paciente_nombre']) ?></div>
-                                                    <small
-                                                        class="badge bg-light text-dark border"><?= htmlspecialchars($v['numero_expediente']) ?></small>
-                                                </td>
-                                                <td>
-                                                    <a href="?id_visita=<?= $v['id_visita'] ?>"
-                                                        class="btn btn-primary btn-sm rounded-pill">
-                                                        Abrir Consulta <i class="bi bi-arrow-right-short"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        <?php endforeach; ?>
-                                    <?php else: ?>
-                                        <tr>
-                                            <td colspan="3" class="text-center py-4 text-muted">No hay visitas recientes</td>
-                                        </tr>
-                                    <?php endif; ?>
-                                </tbody>
-                            </table>
+                        
+                        <div class="alert alert-info mt-4 border-0 shadow-sm">
+                            <i class="bi bi-info-circle-fill me-2"></i>
+                            Si el paciente no aparece en la lista, por favor verifique que la secretaria lo haya dado de alta correctamente.
                         </div>
                     </div>
-                    <div class="card-footer bg-white text-center">
-                        <a href="../visitas/lista.php" class="btn btn-link btn-sm text-decoration-none">Ver todas las
-                            visitas</a>
-                    </div>
-                </div>
-
-                <div class="alert alert-info mt-4 border-0 shadow-sm">
-                    <i class="bi bi-info-circle-fill me-2"></i>
-                    Si el paciente no tiene una visita registrada hoy, <a href="../visitas/nueva.php"
-                        class="alert-link">registre una nueva visita</a> primero.
                 </div>
             </div>
         </div>
+        
+        <script>
+            document.getElementById('patientSelectionInput').addEventListener('input', function() {
+                const search = this.value.toLowerCase();
+                const items = document.querySelectorAll('.patient-item');
+                items.forEach(item => {
+                    const text = item.getAttribute('data-search');
+                    if (text.includes(search)) {
+                        item.classList.remove('d-none');
+                        item.classList.add('d-flex');
+                    } else {
+                        item.classList.add('d-none');
+                        item.classList.remove('d-flex');
+                    }
+                });
+            });
+        </script>
     <?php else: ?>
 
         <form method="POST" id="formMedicinaInterna">
+            <input type="hidden" name="id_paciente" value="<?= $id_paciente ?>">
             <input type="hidden" name="id_visita" value="<?= $id_visita ?>">
+            <input type="hidden" name="id_medicina_interna" value="<?= $datos['id_medicina_interna'] ?? '' ?>">
             <input type="hidden" name="save_consulta" value="1">
 
             <!-- TABS NAVIGATION -->

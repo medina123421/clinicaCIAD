@@ -14,16 +14,41 @@ class MedicinaInterna
         $this->conn = $db;
     }
 
-    /**
-     * Obtener consulta por ID de visita
-     * @param int $id_visita
-     * @return array|false
-     */
     public function obtenerPorVisita($id_visita)
     {
         $query = "SELECT * FROM " . $this->table_name . " WHERE id_visita = :id_visita LIMIT 1";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':id_visita', $id_visita, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Obtener última consulta por ID de paciente
+     * @param int $id_paciente
+     * @return array|false
+     */
+    public function obtenerPorPaciente($id_paciente)
+    {
+        $query = "SELECT * FROM " . $this->table_name . " WHERE id_paciente = :id_paciente ORDER BY fecha_registro DESC LIMIT 1";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id_paciente', $id_paciente, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Obtener consulta específica por ID
+     * @param int $id_medicina_interna
+     * @return array|false
+     */
+    public function obtenerPorId($id_medicina_interna)
+    {
+        $query = "SELECT * FROM " . $this->table_name . " WHERE id_medicina_interna = :id LIMIT 1";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $id_medicina_interna, PDO::PARAM_INT);
         $stmt->execute();
 
         return $stmt->fetch(PDO::FETCH_ASSOC);
@@ -36,11 +61,21 @@ class MedicinaInterna
      */
     public function guardar($datos)
     {
-        $existing = $this->obtenerPorVisita($datos['id_visita']);
+        // Si hay un ID de medicina interna específico, es una actualización
+        $id_medicina_interna = $datos['id_medicina_interna'] ?? null;
+        $existing = null;
 
-        // Lista completa de campos físicos (incluyendo la actualización masiva)
+        if ($id_medicina_interna) {
+            $existing = $this->obtenerPorId($id_medicina_interna);
+        } elseif (!empty($datos['id_visita'])) {
+            $existing = $this->obtenerPorVisita($datos['id_visita']);
+        }
+
+        // Lista completa de campos
         $fields = [
+            'id_paciente',
             'id_visita',
+            'fecha_registro',
             'tipo_diabetes',
             'anio_diagnostico',
             'ultima_hba1c',
@@ -252,7 +287,8 @@ class MedicinaInterna
                     continue;
                 $set_parts[] = "$key = :$key";
             }
-            $query = "UPDATE " . $this->table_name . " SET " . implode(', ', $set_parts) . " WHERE id_visita = :id_visita";
+            $query = "UPDATE " . $this->table_name . " SET " . implode(', ', $set_parts) . " WHERE id_medicina_interna = :id_medicina_interna";
+            $data_to_bind['id_medicina_interna'] = $existing['id_medicina_interna'];
         } else {
             $cols = implode(', ', array_keys($data_to_bind));
             $params = ':' . implode(', :', array_keys($data_to_bind));
