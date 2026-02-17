@@ -17,7 +17,7 @@ class Paciente
     /**
      * Obtener todos los pacientes activos
      */
-    public function obtenerTodos($search = '', $limit = 50, $offset = 0)
+    public function obtenerTodos($search = '', $limit = 7, $offset = 0)
     {
         $query = "SELECT id_paciente, numero_expediente, 
                   CONCAT(nombre, ' ', apellido_paterno, ' ', IFNULL(apellido_materno, '')) as nombre_completo,

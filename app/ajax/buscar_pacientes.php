@@ -16,7 +16,7 @@ try {
     $db = $database->getConnection();
     $paciente_model = new Paciente($db);
 
-    $pacientes = $paciente_model->obtenerTodos($search);
+    $pacientes = $paciente_model->obtenerTodos($search, 7);
 
     $html = '';
 

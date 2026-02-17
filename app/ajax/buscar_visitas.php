@@ -16,7 +16,7 @@ try {
     $db = $database->getConnection();
     $visita_model = new Visita($db);
 
-    $visitas = $visita_model->obtenerTodas($search, 50);
+    $visitas = $visita_model->obtenerTodas($search, 7);
 
     $html = '';
 

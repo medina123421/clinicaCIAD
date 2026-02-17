@@ -28,7 +28,7 @@ $query = "SELECT v.*,
           JOIN pacientes p ON v.id_paciente = p.id_paciente
           JOIN usuarios u ON v.id_doctor = u.id_usuario
           ORDER BY v.fecha_visita DESC
-          LIMIT 50";
+          LIMIT 7";
 $stmt = $db->prepare($query);
 $stmt->execute();
 $visitas = $stmt->fetchAll(PDO::FETCH_ASSOC);

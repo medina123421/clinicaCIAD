@@ -14,7 +14,7 @@ $database = new Database();
 $db = $database->getConnection();
 $paciente_model = new Paciente($db);
 
-$pacientes = $paciente_model->obtenerTodos();
+$pacientes = $paciente_model->obtenerTodos('', 7);
 
 include '../../includes/header.php';
 ?>

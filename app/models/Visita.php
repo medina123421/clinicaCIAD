@@ -96,7 +96,7 @@ class Visita
     /**
      * Obtener todas las visitas con datos de paciente y doctor
      */
-    public function obtenerTodas($search = '', $limit = 50)
+    public function obtenerTodas($search = '', $limit = 7)
     {
         $query = "SELECT v.*, 
                   CONCAT(p.nombre, ' ', p.apellido_paterno, ' ', IFNULL(p.apellido_materno, '')) as paciente_nombre,
