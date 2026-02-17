@@ -47,8 +47,8 @@ try {
             $html .= '<td>' . htmlspecialchars(substr($visita['motivo_consulta'], 0, 50)) . (strlen($visita['motivo_consulta']) > 50 ? '...' : '') . '</td>';
             $html .= '<td><span class="badge bg-' . $estatusColor . '">' . htmlspecialchars($visita['estatus']) . '</span></td>';
             $html .= '<td>';
-            $html .= '<a href="../pacientes/detalle.php?id=' . $visita['id_paciente'] . '" class="btn btn-sm btn-outline-info" title="Ver Paciente"><i class="bi bi-person-eye"></i></a> ';
-            $html .= '<a href="../especialidades/medicina_interna.php?id_visita=' . $visita['id_visita'] . '" class="btn btn-sm btn-outline-primary" title="Consulta Medicina Interna"><i class="bi bi-stethoscope"></i></a>';
+            $html .= '<a href="../pacientes/detalle.php?id=' . $visita['id_paciente'] . '" class="btn btn-sm btn-info text-white" title="Ver Expediente del Paciente" data-bs-toggle="tooltip"><i class="bi bi-person-bounding-box"></i></a> ';
+            $html .= '<a href="../especialidades/medicina_interna.php?id_visita=' . $visita['id_visita'] . '" class="btn btn-sm btn-primary" title="Ir a Consulta Medicina Interna" data-bs-toggle="tooltip"><i class="bi bi-file-earmark-medical"></i></a>';
             $html .= '</td>';
             $html .= '</tr>';
         }

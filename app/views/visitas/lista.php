@@ -122,12 +122,14 @@ include '../../includes/header.php';
                                 </td>
                                 <td>
                                     <a href="../pacientes/detalle.php?id=<?= $visita['id_paciente'] ?>"
-                                        class="btn btn-sm btn-outline-info" title="Ver Paciente">
-                                        <i class="bi bi-person-eye"></i>
+                                        class="btn btn-sm btn-info text-white" title="Ver Expediente del Paciente"
+                                        data-bs-toggle="tooltip">
+                                        <i class="bi bi-person-bounding-box"></i>
                                     </a>
                                     <a href="../especialidades/medicina_interna.php?id_visita=<?= $visita['id_visita'] ?>"
-                                        class="btn btn-sm btn-outline-primary" title="Consulta Medicina Interna">
-                                        <i class="bi bi-stethoscope"></i>
+                                        class="btn btn-sm btn-primary" title="Ir a Consulta Medicina Interna"
+                                        data-bs-toggle="tooltip">
+                                        <i class="bi bi-file-earmark-medical"></i>
                                     </a>
                                 </td>
                             </tr>
