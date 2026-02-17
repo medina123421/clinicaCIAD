@@ -11,6 +11,7 @@ require_once '../../models/Visita.php';
 require_once '../../models/Paciente.php';
 
 $id_visita = $_GET['id_visita'] ?? null;
+$id_paciente = $_GET['id_paciente'] ?? null;
 $message = '';
 $message_type = '';
 
@@ -46,20 +47,28 @@ if ($id_visita) {
     $datos = $medicinaInterna->obtenerPorVisita($id_visita) ?: [];
     $visita = $visitaModel->obtenerPorId($id_visita);
     if ($visita) {
-        $paciente = $pacienteModel->obtenerPorId($visita['id_paciente']);
+        $id_paciente = $visita['id_paciente'];
     }
-} else {
-    // Si no hay visita, obtener visitas recientes para mostrar una lista de selección
-    $query_recent = "SELECT v.*, 
-                    CONCAT(p.nombre, ' ', p.apellido_paterno, ' ', IFNULL(p.apellido_materno, '')) as paciente_nombre,
-                    p.numero_expediente
-                    FROM visitas v
-                    JOIN pacientes p ON v.id_paciente = p.id_paciente
-                    ORDER BY v.fecha_visita DESC
-                    LIMIT 10";
-    $stmt_recent = $db->prepare($query_recent);
-    $stmt_recent->execute();
-    $visitas_recientes = $stmt_recent->fetchAll(PDO::FETCH_ASSOC);
+}
+
+if ($id_paciente) {
+    $paciente = $pacienteModel->obtenerPorId($id_paciente);
+    // Si no cargamos datos por visita, intentamos cargar los últimos datos del paciente para pre-poblar o editar
+    if (empty($datos)) {
+        $datos = $medicinaInterna->obtenerPorPaciente($id_paciente) ?: [];
+    }
+}
+
+if (!$id_visita && !$id_paciente) {
+    // Si no hay visita ni paciente, obtener todos los pacientes activos para selección
+    $query_pacientes = "SELECT id_paciente, numero_expediente, 
+                        CONCAT(nombre, ' ', apellido_paterno, ' ', IFNULL(apellido_materno, '')) as nombre_completo
+                        FROM pacientes 
+                        WHERE activo = 1 
+                        ORDER BY nombre ASC";
+    $stmt_pacientes = $db->prepare($query_pacientes);
+    $stmt_pacientes->execute();
+    $lista_pacientes = $stmt_pacientes->fetchAll(PDO::FETCH_ASSOC);
 }
 
 $page_title = 'Consulta Medicina Interna';
@@ -219,95 +228,69 @@ include '../../includes/header.php';
         </div>
     <?php endif; ?>
 
-    <?php if (!$id_visita): ?>
-        <div class="row">
-            <div class="col-md-5">
+    <?php if (!$id_visita && !$id_paciente): ?>
+        <div class="row justify-content-center">
+            <div class="col-md-8">
                 <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-header bg-primary text-white">
-                        <i class="bi bi-search"></i> Buscar Paciente para Consulta
+                    <div class="card-header bg-primary text-white d-flex align-items-center">
+                        <i class="bi bi-person-plus-fill me-2 fs-5"></i>
+                        <span>Seleccionar Paciente para Consulta</span>
                     </div>
-                    <div class="card-body">
-                        <p class="text-muted small">Busque al paciente para ver sus visitas y comenzar la consulta de
-                            medicina interna.</p>
-                        <div class="search-box mb-3">
-                            <i class="bi bi-search"></i>
-                            <input type="text" class="form-control" id="patientSearchInput"
-                                placeholder="Nombre o expediente...">
+                    <div class="card-body p-4">
+                        <p class="text-muted mb-4">Busque y seleccione al paciente para realizar o actualizar su registro de Medicina Interna de forma directa.</p>
+                        <div class="search-box mb-4">
+                            <i class="bi bi-search text-muted"></i>
+                            <input type="text" class="form-control form-control-lg border-primary border-opacity-25" 
+                                   id="patientSelectionInput" placeholder="Buscar por nombre o número de expediente...">
                         </div>
-                        <div id="patientSearchResults" class="list-group list-group-flush"
-                            style="max-height: 300px; overflow-y: auto;">
-                            <!-- AJAX results here -->
-                            <div class="text-center py-3 text-muted">
-                                <i class="bi bi-person-fill-gear fs-2 d-block mb-2"></i>
-                                <small>Escriba para buscar</small>
-                            </div>
+                        
+                        <div id="patientSelectionList" class="list-group list-group-flush shadow-sm rounded-3 border" style="max-height: 400px; overflow-y: auto;">
+                            <?php foreach ($lista_pacientes as $p): ?>
+                                <a href="?id_paciente=<?= $p['id_paciente'] ?>" 
+                                   class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3 patient-item"
+                                   data-search="<?= strtolower($p['nombre_completo'] . ' ' . $p['numero_expediente']) ?>">
+                                    <div>
+                                        <div class="fw-bold fs-6"><?= htmlspecialchars($p['nombre_completo']) ?></div>
+                                        <small class="text-muted"><i class="bi bi-hash"></i> Exp: <?= htmlspecialchars($p['numero_expediente']) ?></small>
+                                    </div>
+                                    <span class="btn btn-outline-primary btn-sm rounded-pill px-3">
+                                        Seleccionar <i class="bi bi-chevron-right ms-1"></i>
+                                    </span>
+                                </a>
+                            <?php endforeach; ?>
                         </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-7">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-dark text-white">
-                        <i class="bi bi-clock-history"></i> Visitas Recientes
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="table table-hover mb-0 align-middle">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Fecha</th>
-                                        <th>Paciente</th>
-                                        <th>Acción</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php if (count($visitas_recientes) > 0): ?>
-                                        <?php foreach ($visitas_recientes as $v): ?>
-                                            <tr>
-                                                <td>
-                                                    <div class="fw-bold"><?= date('d/m/Y', strtotime($v['fecha_visita'])) ?></div>
-                                                    <small
-                                                        class="text-muted"><?= date('H:i', strtotime($v['fecha_visita'])) ?></small>
-                                                </td>
-                                                <td>
-                                                    <div><?= htmlspecialchars($v['paciente_nombre']) ?></div>
-                                                    <small
-                                                        class="badge bg-light text-dark border"><?= htmlspecialchars($v['numero_expediente']) ?></small>
-                                                </td>
-                                                <td>
-                                                    <a href="?id_visita=<?= $v['id_visita'] ?>"
-                                                        class="btn btn-primary btn-sm rounded-pill">
-                                                        Abrir Consulta <i class="bi bi-arrow-right-short"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        <?php endforeach; ?>
-                                    <?php else: ?>
-                                        <tr>
-                                            <td colspan="3" class="text-center py-4 text-muted">No hay visitas recientes</td>
-                                        </tr>
-                                    <?php endif; ?>
-                                </tbody>
-                            </table>
+                        
+                        <div class="alert alert-info mt-4 border-0 shadow-sm">
+                            <i class="bi bi-info-circle-fill me-2"></i>
+                            Si el paciente no aparece en la lista, por favor verifique que la secretaria lo haya dado de alta correctamente.
                         </div>
                     </div>
-                    <div class="card-footer bg-white text-center">
-                        <a href="../visitas/lista.php" class="btn btn-link btn-sm text-decoration-none">Ver todas las
-                            visitas</a>
-                    </div>
-                </div>
-
-                <div class="alert alert-info mt-4 border-0 shadow-sm">
-                    <i class="bi bi-info-circle-fill me-2"></i>
-                    Si el paciente no tiene una visita registrada hoy, <a href="../visitas/nueva.php"
-                        class="alert-link">registre una nueva visita</a> primero.
                 </div>
             </div>
         </div>
+        
+        <script>
+            document.getElementById('patientSelectionInput').addEventListener('input', function() {
+                const search = this.value.toLowerCase();
+                const items = document.querySelectorAll('.patient-item');
+                items.forEach(item => {
+                    const text = item.getAttribute('data-search');
+                    if (text.includes(search)) {
+                        item.classList.remove('d-none');
+                        item.classList.add('d-flex');
+                    } else {
+                        item.classList.add('d-none');
+                        item.classList.remove('d-flex');
+                    }
+                });
+            });
+        </script>
     <?php else: ?>
 
         <form method="POST" id="formMedicinaInterna">
+            <input type="hidden" name="id_paciente" value="<?= $id_paciente ?>">
             <input type="hidden" name="id_visita" value="<?= $id_visita ?>">
+            <input type="hidden" name="id_medicina_interna" value="<?= $datos['id_medicina_interna'] ?? '' ?>">
             <input type="hidden" name="save_consulta" value="1">
 
             <!-- TABS NAVIGATION -->
@@ -516,6 +499,12 @@ include '../../includes/header.php';
                                             </div>
                                             <div class="col-12">
                                                 <?= renderCheckbox('infecciones_piel', 'Infecciones de piel recurrentes', $datos) ?>
+                                            </div>
+                                            <div class="col-12">
+                                                <?= renderCheckbox('infecciones_urinarias', 'infecciones urinarias recurentes', $datos) ?>
+                                            </div>
+                                            <div class="col-12">
+                                                <?= renderCheckbox('pie_diabetico', 'pie diabetico / Ulceras cronicas', $datos) ?>
                                             </div>
                                         </div>
                                     </div>
@@ -816,11 +805,45 @@ include '../../includes/header.php';
                                                     class="form-control bg-white border-primary"
                                                     value="<?= htmlspecialchars($datos['imc'] ?? '') ?>" readonly>
                                             </div>
-                                            <div class="col-md-3">
-                                                <label class="form-label small fw-bold">Presión Arterial</label>
+                                            <div class="col-md-2">
+                                                <label class="form-label small fw-bold">Presión Art.</label>
                                                 <input type="text" name="presion_arterial" class="form-control"
                                                     placeholder="120/80"
                                                     value="<?= htmlspecialchars($datos['presion_arterial'] ?? '') ?>">
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class="form-label small fw-bold">F. Cardiaca</label>
+                                                <div class="input-group">
+                                                    <input type="number" name="frecuencia_cardiaca" class="form-control"
+                                                        value="<?= htmlspecialchars($datos['frecuencia_cardiaca'] ?? '') ?>">
+                                                    <span class="input-group-text small px-1">lpm</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class="form-label small fw-bold">Temp.</label>
+                                                <div class="input-group">
+                                                    <input type="number" step="0.1" name="temperatura" class="form-control"
+                                                        value="<?= htmlspecialchars($datos['temperatura'] ?? '') ?>">
+                                                    <span class="input-group-text small px-1">°C</span>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-2">
+                                                <label class="form-label small fw-bold">F. Resp.</label>
+                                                <div class="input-group">
+                                                    <input type="number" name="frecuencia_respiratoria" class="form-control"
+                                                        value="<?= htmlspecialchars($datos['frecuencia_respiratoria'] ?? '') ?>">
+                                                    <span class="input-group-text small px-1">rpm</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class="form-label small fw-bold">Circ. Abdominal</label>
+                                                <div class="input-group">
+                                                    <input type="number" step="0.1" name="circunferencia_abdominal"
+                                                        class="form-control"
+                                                        value="<?= htmlspecialchars($datos['circunferencia_abdominal'] ?? '') ?>">
+                                                    <span class="input-group-text small px-1">cm</span>
+                                                </div>
                                             </div>
                                             <div class="col-md-3">
                                                 <label class="form-label small fw-bold">Glucosa Capilar</label>
@@ -834,86 +857,206 @@ include '../../includes/header.php';
                                     </div>
                                 </div>
 
-                                <!-- Control Glucémico -->
-                                <div class="col-md-6">
-                                    <div class="medical-section h-100">
-                                        <h6 class="fw-bold text-primary border-bottom pb-2">Control Glucémico y Bitácora
-                                        </h6>
-                                        <div class="row g-3">
-                                            <div class="col-12">
-                                                <?= renderCheckbox('control_bitacora', 'Cuenta con bitácora de monitoreo', $datos) ?>
-                                            </div>
-                                            <div class="col-12">
-                                                <?= renderCheckbox('control_hipoglucemias', 'Presenta hipoglucemias recurrentes', $datos) ?>
-                                                <div id="control_hipoglucemias_detalles_container" class="mt-2 ps-4"
-                                                    style="<?= ($datos['control_hipoglucemias'] ?? 0) ? '' : 'display:none' ?>">
-                                                    <textarea name="control_hipoglucemias_detalles"
-                                                        class="form-control form-control-sm" rows="2"
-                                                        placeholder="Frecuencia, horario, síntomas..."><?= htmlspecialchars($datos['control_hipoglucemias_detalles'] ?? '') ?></textarea>
+                                <div class="row g-4">
+                                    <!-- 2. Control de la Diabetes -->
+                                    <div class="col-md-6">
+                                        <div class="medical-section h-100">
+                                            <h6 class="fw-bold text-primary mb-3">2. Control de la Diabetes</h6>
+                                            <div class="row g-2">
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('control_glucemia_hb1ac_reciente', 'Revisión de valores recientes de HbA1c', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('control_glucemia_glucometrias_diarias', 'Revisión de glucometrías diarias o bitácora del paciente', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('control_glucemia_hipoglucemias_recientes', 'Hipoglucemias recientes (si/no y frecuencia)', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('control_glucemia_hiperglucemias_sintomaticas', 'Hiperglucemias sintomáticas', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('control_glucemia_cambios_medicamentos', 'Adherencia al tratamiento / Cambios o problemas con medicamentos', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('control_glucemia_aplicacion_insulina_adecuada', 'Aplicación adecuada de insulina (técnica, dosis, horarios)', $datos) ?>
                                                 </div>
                                             </div>
-                                            <div class="col-12">
-                                                <?= renderCheckbox('control_hiperglucemias_sintomaticas', 'Hiperglucemias sintomáticas', $datos) ?>
+                                        </div>
+                                    </div>
+
+                                    <!-- 3. Revisión de Complicaciones -->
+                                    <div class="col-md-6">
+                                        <div class="medical-section h-100">
+                                            <h6 class="fw-bold text-primary mb-3">3. Revisión de Complicaciones</h6>
+
+                                            <p class="small fw-bold text-secondary mb-1">A. Complicaciones Microvasculares
+                                            </p>
+                                            <div class="row g-1 mb-3">
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('pie_diabetico', 'Revisión de pies (úlcera, callosidades, sensibilidad, pulsos)', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('rev_neuropatia_monofilamento', 'Neuropatía (monofilamento si es posible)', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('rev_renal_laboratorios', 'Revisión de la función renal (últimos laboratorios)', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('rev_vision_borrosa', 'Preguntar por visión borrosa / última revisión oftalmológica', $datos) ?>
+                                                </div>
                                             </div>
-                                            <div class="col-12">
-                                                <?= renderCheckbox('control_adherencia', 'Buena adherencia al tratamiento', $datos) ?>
+
+                                            <p class="small fw-bold text-secondary mb-1">B. Complicaciones Macrovasculares
+                                            </p>
+                                            <div class="row g-1">
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('rev_macro_coronaria', 'Signos o síntomas de enfermedad coronaria', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('rev_macro_claudicacion', 'Claudicación intermitente', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('rev_riesgo_cv', 'Revisión de riesgo cardiovascular', $datos) ?>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <!-- Revisiones Especializadas -->
-                                <div class="col-md-6">
-                                    <div class="medical-section h-100">
-                                        <h6 class="fw-bold text-primary border-bottom pb-2">Revisiones de Complicaciones
-                                        </h6>
-                                        <div class="row g-3">
-                                            <div class="col-12">
-                                                <?= renderCheckbox('rev_neuropatia_monofilamento', 'Examen con monofilamento (Sensibilidad)', $datos) ?>
-                                            </div>
-                                            <div class="col-12">
-                                                <?= renderCheckbox('rev_renal_laboratorios', 'Revisión de función renal (Microalb/TFG)', $datos) ?>
-                                            </div>
-                                            <div class="col-12">
-                                                <?= renderTextSection('Hallazgos en Pies', 'pie_diabetico', 'rev_pies_detalles', $datos) ?>
-                                            </div>
-                                            <div class="col-12">
-                                                <?= renderCheckbox('rev_riesgo_cv', 'Evaluación de riesgo CV (SCORE/Framingham)', $datos) ?>
+                                    <!-- 4. Laboratorios Relevantes -->
+                                    <div class="col-md-6">
+                                        <div class="medical-section h-100">
+                                            <h6 class="fw-bold text-primary mb-3">4. Laboratorios Relevantes (verificación
+                                                de estudios recientes)</h6>
+                                            <div class="row g-2">
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('lab_glucosa_ayunas', 'Glucosa', $datos) ?>
+                                                </div>
+                                                <div class="col-12"><?= renderCheckbox('lab_hba1c', 'HbA1c', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('lab_lipidos', 'Perfil lipídico', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('lab_creatinina_tfg', 'Creatinina y TFG', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('lab_microalbuminuria', 'Microalbuminuria', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('lab_ego_aplica', 'EGO (si aplica)', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('lab_funcion_hepatica_especifica', 'Función hepática (en pacientes con tratamientos específicos)', $datos) ?>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <!-- Estilo de Vida y Salud Mental -->
-                                <div class="col-md-12">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="medical-section">
-                                                <h6 class="fw-bold text-success mb-3"><i class="bi bi-bicycle"></i> Estilo
-                                                    de Vida</h6>
-                                                <?= renderCheckbox('alimentacion_adecuada', 'Alimentación saludable', $datos) ?>
-                                                <?= renderCheckbox('actividad_fisica', 'Actividad física regular', $datos) ?>
-                                                <?= renderCheckbox('horarios_comida_regulares', 'Horarios de comida regulares', $datos) ?>
-                                                <?= renderCheckbox('tabaquismo', 'Tabaquismo activo', $datos) ?>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="medical-section">
-                                                <h6 class="fw-bold text-info mb-3"><i class="bi bi-mortarboard"></i>
-                                                    Educación y Psico-Social</h6>
-                                                <?= renderCheckbox('educacion_diabetologica', 'Recibió educación diabetológica', $datos) ?>
-                                                <?= renderCheckbox('tecnica_insulina', 'Técnica de inyección correcta', $datos) ?>
-                                                <?= renderCheckbox('revision_metas', 'Revisión de metas terapéuticas', $datos) ?>
-                                                <?= renderCheckbox('apoyo_familiar_social', 'Cuenta con apoyo familiar/social', $datos) ?>
+                                    <!-- 5. Medicación y Tratamiento -->
+                                    <div class="col-md-6">
+                                        <div class="medical-section h-100">
+                                            <h6 class="fw-bold text-primary mb-3">5. Medicación y Tratamiento</h6>
+                                            <div class="row g-2">
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('med_revision_completa', 'Revisión completa de medicamentos en uso', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('med_ajuste_orales', 'Ajustes necesarios de antidiabéticos orales', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('med_ajuste_insulina', 'Ajustes necesarios de insulina', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('med_ajuste_estatina_hta', 'Revisión de estatina o antihipertensivo si está indicado', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('med_evaluar_cambio', 'Evaluar necesidad de añadir o retirar medicamentos', $datos) ?>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div class="col-md-12">
-                                    <label class="form-label fw-bold">Plan Médico, Conducta y Próximos Pasos</label>
-                                    <textarea name="observaciones_adicionales" class="form-control" rows="5"
-                                        placeholder="Escriba el plan detallado, cambios en dosis, solicitud de exámenes..."><?= htmlspecialchars($datos['observaciones_adicionales'] ?? '') ?></textarea>
+                                    <!-- 6. Estilo de Vida -->
+                                    <div class="col-md-6">
+                                        <div class="medical-section h-100">
+                                            <h6 class="fw-bold text-primary mb-3">6. Estilo de Vida</h6>
+                                            <div class="row g-2">
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('alimentacion_adecuada', 'Alimentación / adherencia a plan nutricional', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('actividad_fisica', 'Actividad física', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('consumo_alcohol', 'Consumo de alcohol', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('tabaquismo', 'Tabaquismo', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('horarios_comida_regulares', 'Horarios de comida', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('educacion_diabetologica', 'Educación diabetológica (pendiente o actualizada)', $datos) ?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 7. Salud Mental y Bienestar -->
+                                    <div class="col-md-6">
+                                        <div class="medical-section h-100">
+                                            <h6 class="fw-bold text-primary mb-3">7. Salud Mental y Bienestar</h6>
+                                            <div class="row g-2">
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('estado_animo', 'Estado de ánimo', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('sintomas_ansiedad_depresion', 'Síntomas de ansiedad o depresión', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('estres_enfermedad', 'Estrés relacionado con la enfermedad', $datos) ?>
+                                                </div>
+                                                <div class="col-12">
+                                                    <?= renderCheckbox('apoyo_familiar_social', 'Apoyo familiar o social', $datos) ?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 8. Educación y Prevención -->
+                                    <div class="col-md-12">
+                                        <div class="medical-section">
+                                            <h6 class="fw-bold text-primary mb-3">8. Educación y Prevención</h6>
+                                            <div class="row g-2">
+                                                <div class="col-md-6">
+                                                    <?= renderCheckbox('tecnica_insulina', 'Técnica de administración de insulina (si usa)', $datos) ?>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <?= renderCheckbox('revision_sitio_inyeccion', 'Revisión de sitio de inyección (lipodistrofias)', $datos) ?>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <?= renderCheckbox('prevencion_hipoglucemia', 'Prevención de hipoglucemia', $datos) ?>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <?= renderCheckbox('cuidado_pies', 'Cuidado de pies', $datos) ?>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <?= renderCheckbox('revision_metas', 'Revisión de metas del tratamiento', $datos) ?>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <?= renderCheckbox('prog_estudios_pendientes', 'Programar estudios pendientes (oftalmo, laboratorios, etc.)', $datos) ?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12 mt-3">
+                                        <label class="form-label fw-bold">Plan Médico, Conducta y Próximos Pasos</label>
+                                        <textarea name="observaciones_adicionales" class="form-control" rows="5"
+                                            placeholder="Escriba el plan detallado, cambios en dosis, solicitud de exámenes..."><?= htmlspecialchars($datos['observaciones_adicionales'] ?? '') ?></textarea>
+                                    </div>
                                 </div>
                             </div>
                         </div>
