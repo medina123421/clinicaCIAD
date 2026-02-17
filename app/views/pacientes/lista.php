@@ -113,8 +113,9 @@ include '../../includes/header.php';
                                 <td>
                                     <div class="d-flex gap-1">
                                         <a href="detalle.php?id=<?= $paciente['id_paciente'] ?>"
-                                            class="btn btn-info btn-sm text-white" title="Ver Detalle">
-                                            <i class="bi bi-eye"></i>
+                                            class="btn btn-info btn-sm text-white" title="Ver Expediente del Paciente"
+                                            data-bs-toggle="tooltip">
+                                            <i class="bi bi-person-bounding-box"></i>
                                         </a>
                                         <a href="editar.php?id=<?= $paciente['id_paciente'] ?>"
                                             class="btn btn-warning btn-sm text-white" title="Editar">
