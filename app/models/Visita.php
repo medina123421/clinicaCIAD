@@ -20,20 +20,21 @@ class Visita
     public function crear($datos, $usuario_id)
     {
         $query = "INSERT INTO " . $this->table_name . "
-                  (id_paciente, id_doctor, fecha_visita, tipo_visita, motivo_consulta, 
-                   diagnostico, plan_tratamiento, observaciones, proxima_cita, estatus, created_by)
-                  VALUES 
-                  (:id_paciente, :id_doctor, :fecha_visita, :tipo_visita, :motivo_consulta,
-                   :diagnostico, :plan_tratamiento, :observaciones, :proxima_cita, :estatus, :created_by)";
+              (id_paciente, id_doctor, fecha_visita, tipo_visita, numero_visita,
+               diagnostico, plan_tratamiento, observaciones, proxima_cita, estatus, created_by)
+              VALUES 
+              (:id_paciente, :id_doctor, :fecha_visita, :tipo_visita, :numero_visita,
+               :diagnostico, :plan_tratamiento, :observaciones, :proxima_cita, :estatus, :created_by)";
 
         $stmt = $this->conn->prepare($query);
 
         // Bind parameters
         $stmt->bindParam(':id_paciente', $datos['id_paciente'], PDO::PARAM_INT);
-        $stmt->bindParam(':id_doctor', $datos['id_doctor'], PDO::PARAM_INT); // Puede ser el mismo usuario_id si es doctor
+        $stmt->bindParam(':id_doctor', $datos['id_doctor'], PDO::PARAM_INT);
         $stmt->bindParam(':fecha_visita', $datos['fecha_visita']);
         $stmt->bindParam(':tipo_visita', $datos['tipo_visita']);
-        $stmt->bindParam(':motivo_consulta', $datos['motivo_consulta']);
+        $numero_visita = $datos['numero_visita'] ?? null;
+        $stmt->bindParam(':numero_visita', $numero_visita);
         $stmt->bindParam(':diagnostico', $datos['diagnostico']);
         $stmt->bindParam(':plan_tratamiento', $datos['plan_tratamiento']);
         $stmt->bindParam(':observaciones', $datos['observaciones']);

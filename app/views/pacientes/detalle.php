@@ -271,6 +271,15 @@ include '../../includes/header.php';
                                     class="btn btn-outline-primary btn-sm">
                                     <i class="bi bi-stethoscope"></i> Ver Consulta Medicina Interna
                                 </a>
+                                <a href="../especialidades/nutricion.php?id_visita=<?= $ultima_visita['id_visita'] ?>"
+                                    class="btn btn-outline-success btn-sm mt-1">
+                                    <i class="bi bi-apple"></i> Ver Consulta Nutrición
+                                </a>
+                                <a href="../especialidades/psicologia.php?id_visita=<?= $ultima_visita['id_visita'] ?>"
+                                    class="btn btn-outline-secondary btn-sm mt-1"
+                                    style="border-color:#6f42c1;color:#6f42c1">
+                                    <i class="bi bi-brain"></i> Ver Consulta Psicología
+                                </a>
                             </td>
                         </tr>
                     </table>

@@ -6,7 +6,7 @@
 require_once '../../config/database.php';
 require_once '../../models/Analisis.php';
 
-$id_visita = $_GET['id'] ?? null;
+$id_visita = $_GET['id'] ?? $_GET['id_visita'] ?? null;
 if (!$id_visita)
     die("ID de visita no especificado.");
 
@@ -433,6 +433,284 @@ $edad = $hoy->diff($fecha_nac)->y;
                         <?= $detalle['parasitos'] ?>
                     </td>
                 </tr>
+            </tbody>
+        </table>
+    <?php endif; ?>
+
+    <!-- ================= PERFIL LIPÍDICO ================= -->
+    <?php if ($detalle['id_lipidico']): ?>
+        <h3>Perfil Lipídico</h3>
+        <table class="results-table">
+            <thead>
+                <tr>
+                    <th width="40%">Parámetro</th>
+                    <th width="30%">Resultado</th>
+                    <th width="30%">Valores de Referencia</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if ($detalle['colesterol_total']): ?>
+                    <tr>
+                        <td>Colesterol Total</td>
+                        <td><b><?= $detalle['colesterol_total'] ?></b> mg/dL</td>
+                        <td class="range">< 200</td>
+                    </tr>
+                <?php endif; ?>
+                <?php if ($detalle['ldl']): ?>
+                    <tr>
+                        <td>LDL (Colesterol Malo)</td>
+                        <td><b><?= $detalle['ldl'] ?></b> mg/dL</td>
+                        <td class="range">< 100</td>
+                    </tr>
+                <?php endif; ?>
+                <?php if ($detalle['hdl']): ?>
+                    <tr>
+                        <td>HDL (Colesterol Bueno)</td>
+                        <td><b><?= $detalle['hdl'] ?></b> mg/dL</td>
+                        <td class="range">> 40</td>
+                    </tr>
+                <?php endif; ?>
+                <?php if ($detalle['trigliceridos']): ?>
+                    <tr>
+                        <td>Triglicéridos</td>
+                        <td><b><?= $detalle['trigliceridos'] ?></b> mg/dL</td>
+                        <td class="range">< 150</td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    <?php endif; ?>
+
+    <!-- ================= PERFIL RENAL ================= -->
+    <?php if ($detalle['id_renal']): ?>
+        <h3>Perfil Renal</h3>
+        <table class="results-table">
+            <thead>
+                <tr>
+                    <th width="40%">Parámetro</th>
+                    <th width="30%">Resultado</th>
+                    <th width="30%">Valores de Referencia</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if ($detalle['creatinina_serica']): ?>
+                    <tr>
+                        <td>Creatinina Sérica</td>
+                        <td><b><?= $detalle['creatinina_serica'] ?></b> mg/dL</td>
+                        <td class="range">0.6 - 1.2</td>
+                    </tr>
+                <?php endif; ?>
+                <?php if ($detalle['tasa_filtracion_glomerular']): ?>
+                    <tr>
+                        <td>Tasa de Filtración Glomerular (TFG)</td>
+                        <td><b><?= $detalle['tasa_filtracion_glomerular'] ?></b> mL/min/1.73m²</td>
+                        <td class="range">> 60</td>
+                    </tr>
+                <?php endif; ?>
+                <?php if ($detalle['urea_renal']): ?>
+                    <tr>
+                        <td>Urea</td>
+                        <td><b><?= $detalle['urea_renal'] ?></b> mg/dL</td>
+                        <td class="range">15 - 45</td>
+                    </tr>
+                <?php endif; ?>
+                <?php if ($detalle['bun_renal']): ?>
+                    <tr>
+                        <td>BUN</td>
+                        <td><b><?= $detalle['bun_renal'] ?></b> mg/dL</td>
+                        <td class="range">7 - 20</td>
+                    </tr>
+                <?php endif; ?>
+                <?php if ($detalle['microalbuminuria']): ?>
+                    <tr>
+                        <td>Microalbuminuria</td>
+                        <td><b><?= $detalle['microalbuminuria'] ?></b> mg/L</td>
+                        <td class="range">< 30</td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    <?php endif; ?>
+
+    <!-- ================= ANÁLISIS DE GLUCOSA ================= -->
+    <?php if ($detalle['id_glucosa']): ?>
+        <h3>Análisis de Glucosa</h3>
+        <table class="results-table">
+            <thead>
+                <tr>
+                    <th width="40%">Parámetro</th>
+                    <th width="30%">Resultado</th>
+                    <th width="30%">Valores de Referencia</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if ($detalle['glucosa_ayunas']): ?>
+                    <tr>
+                        <td>Glucosa en Ayunas</td>
+                        <td><b><?= $detalle['glucosa_ayunas'] ?></b> mg/dL</td>
+                        <td class="range">70 - 100</td>
+                    </tr>
+                <?php endif; ?>
+                <?php if ($detalle['glucosa_postprandial_2h']): ?>
+                    <tr>
+                        <td>Glucosa Postprandial (2h)</td>
+                        <td><b><?= $detalle['glucosa_postprandial_2h'] ?></b> mg/dL</td>
+                        <td class="range">< 140</td>
+                    </tr>
+                <?php endif; ?>
+                <?php if ($detalle['hemoglobina_glicosilada']): ?>
+                    <tr>
+                        <td>Hemoglobina Glicosilada (HbA1c)</td>
+                        <td><b><?= $detalle['hemoglobina_glicosilada'] ?></b> %</td>
+                        <td class="range">< 7.0</td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    <?php endif; ?>
+
+    <!-- ================= PERFIL HEPÁTICO ================= -->
+    <?php if ($detalle['id_hepatico']): ?>
+        <h3>Perfil Hepático</h3>
+        <table class="results-table">
+            <thead>
+                <tr>
+                    <th width="40%">Parámetro</th>
+                    <th width="30%">Resultado</th>
+                    <th width="30%">Valores de Referencia</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if ($detalle['bilirrubina_total']): ?>
+                    <tr>
+                        <td>Bilirrubina Total</td>
+                        <td><b><?= $detalle['bilirrubina_total'] ?></b> mg/dL</td>
+                        <td class="range">0.3 - 1.2</td>
+                    </tr>
+                <?php endif; ?>
+                <?php if ($detalle['bilirrubina_directa']): ?>
+                    <tr>
+                        <td>Bilirrubina Directa</td>
+                        <td><b><?= $detalle['bilirrubina_directa'] ?></b> mg/dL</td>
+                        <td class="range">0.1 - 0.3</td>
+                    </tr>
+                <?php endif; ?>
+                <?php if ($detalle['alt_gpt']): ?>
+                    <tr>
+                        <td>ALT (GPT)</td>
+                        <td><b><?= $detalle['alt_gpt'] ?></b> U/L</td>
+                        <td class="range">10 - 40</td>
+                    </tr>
+                <?php endif; ?>
+                <?php if ($detalle['ast_got']): ?>
+                    <tr>
+                        <td>AST (GOT)</td>
+                        <td><b><?= $detalle['ast_got'] ?></b> U/L</td>
+                        <td class="range">10 - 40</td>
+                    </tr>
+                <?php endif; ?>
+                <?php if ($detalle['fosfatasa_alcalina']): ?>
+                    <tr>
+                        <td>Fosfatasa Alcalina</td>
+                        <td><b><?= $detalle['fosfatasa_alcalina'] ?></b> U/L</td>
+                        <td class="range">40 - 130</td>
+                    </tr>
+                <?php endif; ?>
+                <?php if ($detalle['ggt']): ?>
+                    <tr>
+                        <td>GGT</td>
+                        <td><b><?= $detalle['ggt'] ?></b> U/L</td>
+                        <td class="range">10 - 60</td>
+                    </tr>
+                <?php endif; ?>
+                <?php if ($detalle['proteinas_totales']): ?>
+                    <tr>
+                        <td>Proteínas Totales</td>
+                        <td><b><?= $detalle['proteinas_totales'] ?></b> g/dL</td>
+                        <td class="range">6.0 - 8.5</td>
+                    </tr>
+                <?php endif; ?>
+                <?php if ($detalle['albumina']): ?>
+                    <tr>
+                        <td>Albumina</td>
+                        <td><b><?= $detalle['albumina'] ?></b> g/dL</td>
+                        <td class="range">3.5 - 5.0</td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    <?php endif; ?>
+
+    <!-- ================= PERFIL TIROIDEO ================= -->
+    <?php if ($detalle['id_tiroideo']): ?>
+        <h3>Perfil Tiroideo</h3>
+        <table class="results-table">
+            <thead>
+                <tr>
+                    <th width="40%">Parámetro</th>
+                    <th width="30%">Resultado</th>
+                    <th width="30%">Valores de Referencia</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if ($detalle['t3_total']): ?>
+                    <tr>
+                        <td>T3 Total</td>
+                        <td><b><?= $detalle['t3_total'] ?></b> ng/mL</td>
+                        <td class="range">0.8 - 2.0</td>
+                    </tr>
+                <?php endif; ?>
+                <?php if ($detalle['t3_libre']): ?>
+                    <tr>
+                        <td>T3 Libre</td>
+                        <td><b><?= $detalle['t3_libre'] ?></b> pg/mL</td>
+                        <td class="range">2.3 - 4.2</td>
+                    </tr>
+                <?php endif; ?>
+                <?php if ($detalle['t4_total']): ?>
+                    <tr>
+                        <td>T4 Total</td>
+                        <td><b><?= $detalle['t4_total'] ?></b> µg/dL</td>
+                        <td class="range">5.0 - 12.0</td>
+                    </tr>
+                <?php endif; ?>
+                <?php if ($detalle['t4_libre']): ?>
+                    <tr>
+                        <td>T4 Libre</td>
+                        <td><b><?= $detalle['t4_libre'] ?></b> ng/dL</td>
+                        <td class="range">0.8 - 1.8</td>
+                    </tr>
+                <?php endif; ?>
+                <?php if ($detalle['tsh']): ?>
+                    <tr>
+                        <td>TSH</td>
+                        <td><b><?= $detalle['tsh'] ?></b> mUI/L</td>
+                        <td class="range">0.4 - 4.5</td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    <?php endif; ?>
+
+    <!-- ================= INSULINA ================= -->
+    <?php if ($detalle['id_insulina']): ?>
+        <h3>Insulina</h3>
+        <table class="results-table">
+            <thead>
+                <tr>
+                    <th width="40%">Parámetro</th>
+                    <th width="30%">Resultado</th>
+                    <th width="30%">Valores de Referencia</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if ($detalle['insulina_basal']): ?>
+                    <tr>
+                        <td>Insulina Basal</td>
+                        <td><b><?= $detalle['insulina_basal'] ?></b> µUI/mL</td>
+                        <td class="range">5 - 25</td>
+                    </tr>
+                <?php endif; ?>
             </tbody>
         </table>
     <?php endif; ?>

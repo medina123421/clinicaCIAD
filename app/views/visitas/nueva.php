@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'id_doctor' => $_SESSION['usuario_id'],
             'fecha_visita' => $_POST['fecha_visita'] . ' ' . $_POST['hora_visita'],
             'tipo_visita' => $_POST['tipo_visita'],
-            'motivo_consulta' => trim($_POST['motivo_consulta'] ?? ''),
+            'numero_visita' => $_POST['numero_visita'] ?? null,
             'diagnostico' => trim($_POST['diagnostico'] ?? ''),
             'plan_tratamiento' => trim($_POST['plan_tratamiento'] ?? ''),
             'observaciones' => trim($_POST['observaciones'] ?? ''),
@@ -152,7 +152,26 @@ include '../../includes/header.php';
                     </select>
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Número de Visita</label>
+                    <select class="form-select" name="numero_visita">
+                        <option value="">-- Seleccionar --</option>
+                        <option value="V1">V1</option>
+                        <option value="V2">V2</option>
+                        <option value="V3">V3</option>
+                        <option value="V4">V4</option>
+                        <option value="SEG1">SEG1</option>
+                        <option value="SEG2">SEG2</option>
+                        <option value="SEG3">SEG3</option>
+                        <option value="SEG4">SEG4</option>
+                        <option value="SEG5">SEG5</option>
+                        <option value="SEG6">SEG6</option>
+                        <option value="SEG7">SEG7</option>
+                        <option value="SEG8">SEG8</option>
+                    </select>
+                </div>
+
+                <div class="col-md-4">
                     <label class="form-label">Estatus</label>
                     <select class="form-select" name="estatus">
                         <option value="Completada">Completada</option>

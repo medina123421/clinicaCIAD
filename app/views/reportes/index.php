@@ -33,6 +33,11 @@ include '../../includes/header.php';
                         <i class="bi bi-file-earmark-excel"></i> Exportar Lista Excel
                     </a>
                 </div>
+                <div class="btn-group">
+                    <a href="consultas_avanzadas.php" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-graph-up-arrow"></i> Consultas y gráficas
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -80,9 +85,15 @@ include '../../includes/header.php';
                 <th>Fecha</th>
                 <th>Paciente</th>
                 <th>Expediente</th>
-                <th>Bio. Hemática</th>
-                <th>Química S.</th>
-                <th>Ex. Orina</th>
+                <th class="text-center">Bio. Hemática</th>
+                <th class="text-center">Química S.</th>
+                <th class="text-center">Ex. Orina</th>
+                <th class="text-center">P. Lipídico</th>
+                <th class="text-center">P. Renal</th>
+                <th class="text-center">P. Hepático</th>
+                <th class="text-center">P. Tiroideo</th>
+                <th class="text-center">Insulina</th>
+                <th class="text-center">Glucosa</th>
                 <th class="text-center">Acciones</th>
             </tr>
         </thead>
@@ -103,6 +114,24 @@ include '../../includes/header.php';
                             <?= $fila['id_orina'] ? '<span class="badge bg-success small">Sí</span>' : '<span class="text-muted small">-</span>' ?>
                         </td>
                         <td class="text-center">
+                            <?= $fila['id_lipidico'] ? '<span class="badge bg-success small">Sí</span>' : '<span class="text-muted small">-</span>' ?>
+                        </td>
+                        <td class="text-center">
+                            <?= $fila['id_renal'] ? '<span class="badge bg-success small">Sí</span>' : '<span class="text-muted small">-</span>' ?>
+                        </td>
+                        <td class="text-center">
+                            <?= $fila['id_hepatico'] ? '<span class="badge bg-success small">Sí</span>' : '<span class="text-muted small">-</span>' ?>
+                        </td>
+                        <td class="text-center">
+                            <?= $fila['id_tiroideo'] ? '<span class="badge bg-success small">Sí</span>' : '<span class="text-muted small">-</span>' ?>
+                        </td>
+                        <td class="text-center">
+                            <?= $fila['id_insulina'] ? '<span class="badge bg-success small">Sí</span>' : '<span class="text-muted small">-</span>' ?>
+                        </td>
+                        <td class="text-center">
+                            <?= $fila['id_glucosa'] ? '<span class="badge bg-success small">Sí</span>' : '<span class="text-muted small">-</span>' ?>
+                        </td>
+                        <td class="text-center">
                             <div class="btn-group" role="group">
                                 <!-- Botón Imprimir Resultados -->
                                 <a href="imprimir.php?id=<?= $fila['id_visita'] ?>" target="_blank"
@@ -120,7 +149,7 @@ include '../../includes/header.php';
                 <?php endforeach; ?>
             <?php else: ?>
                 <tr>
-                    <td colspan="7" class="text-center text-muted py-3">No hay registros para mostrar.</td>
+                    <td colspan="13" class="text-center text-muted py-3">No hay registros para mostrar.</td>
                 </tr>
             <?php endif; ?>
         </tbody>
@@ -128,14 +157,14 @@ include '../../includes/header.php';
 </div>
 
 <script>
-$(document).ready(function() {
-    $("#reporteSearchInput").on("keyup", function() {
-        const value = $(this).val().toLowerCase();
-        $("table tbody tr").filter(function() {
-            var text = $(this).text().toLowerCase();
-            $(this).toggle(text.indexOf(value) > -1);
+    $(document).ready(function () {
+        $("#reporteSearchInput").on("keyup", function () {
+            const value = $(this).val().toLowerCase();
+            $("table tbody tr").filter(function () {
+                var text = $(this).text().toLowerCase();
+                $(this).toggle(text.indexOf(value) > -1);
+            });
         });
     });
-});
 </script>
 <?php include '../../includes/footer.php'; ?>

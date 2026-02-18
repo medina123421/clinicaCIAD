@@ -44,7 +44,7 @@ $reportes_mi = $stmt_mi->fetchAll(PDO::FETCH_ASSOC);
 // Obtener todos los análisis (referenciados por visita)
 $query_lab = "SELECT v.fecha_visita, v.id_visita,
               lbh.id_biometria, lqs.id_quimica, leo.id_orina, lph.id_hepatico, lpt.id_tiroideo, li.id_insulina,
-              ag.id_glucosa as id_glucosa_lab, apr.id_perfil_renal, apl.id_perfil_lipidico
+              ag.id_analisis as id_glucosa_lab, apr.id_analisis as id_perfil_renal, apl.id_analisis as id_perfil_lipidico
               FROM visitas v
               LEFT JOIN lab_biometria_hematica lbh ON v.id_visita = lbh.id_visita
               LEFT JOIN lab_quimica_sanguinea lqs ON v.id_visita = lqs.id_visita
@@ -58,7 +58,7 @@ $query_lab = "SELECT v.fecha_visita, v.id_visita,
               WHERE v.id_paciente = :id
               AND (lbh.id_biometria IS NOT NULL OR lqs.id_quimica IS NOT NULL OR leo.id_orina IS NOT NULL 
                    OR lph.id_hepatico IS NOT NULL OR lpt.id_tiroideo IS NOT NULL OR li.id_insulina IS NOT NULL
-                   OR ag.id_glucosa IS NOT NULL OR apr.id_perfil_renal IS NOT NULL OR apl.id_perfil_lipidico IS NOT NULL)
+                   OR ag.id_analisis IS NOT NULL OR apr.id_analisis IS NOT NULL OR apl.id_analisis IS NOT NULL)
               ORDER BY v.fecha_visita DESC";
 $stmt_lab = $db->prepare($query_lab);
 $stmt_lab->bindParam(':id', $id_paciente);

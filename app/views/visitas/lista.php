@@ -75,7 +75,7 @@ include '../../includes/header.php';
                             <th>Paciente</th>
                             <th>Doctor</th>
                             <th>Tipo</th>
-                            <th>Motivo</th>
+                            <th>Número Visita</th>
                             <th>Estatus</th>
                         </tr>
                     </thead>
@@ -96,7 +96,12 @@ include '../../includes/header.php';
                                     <span class="badge bg-secondary"><?= htmlspecialchars($visita['tipo_visita']) ?></span>
                                 </td>
                                 <td>
-                                    <?= htmlspecialchars(substr($visita['motivo_consulta'], 0, 50)) . (strlen($visita['motivo_consulta']) > 50 ? '...' : '') ?>
+                                    <?php if (!empty($visita['numero_visita'])): ?>
+                                        <span
+                                            class="badge bg-info text-dark"><?= htmlspecialchars($visita['numero_visita']) ?></span>
+                                    <?php else: ?>
+                                        <span class="text-muted small">-</span>
+                                    <?php endif; ?>
                                 </td>
                                 <td>
                                     <?php
