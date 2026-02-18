@@ -69,7 +69,7 @@ include '../../includes/header.php';
         <h2><i class="bi bi-droplet"></i> Perfil Renal</h2>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="../../index.php">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="../../../index.php">Dashboard</a></li>
                 <li class="breadcrumb-item active">Perfil Renal</li>
             </ol>
         </nav>
@@ -92,7 +92,8 @@ include '../../includes/header.php';
             <div class="row">
                 <div class="col-md-8">
                     <label class="form-label">Buscar Paciente</label>
-                    <input class="form-control" list="datalistOptions" id="busqueda_paciente" required>
+                    <input class="form-control" list="datalistOptions" id="busqueda_paciente" autocomplete="off"
+                        required>
                     <datalist id="datalistOptions">
                         <?php foreach ($pacientes as $paciente): ?>
                             <option data-id="<?= $paciente['id_paciente'] ?>"
@@ -173,7 +174,7 @@ include '../../includes/header.php';
     </div>
 
     <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-5">
-        <a href="../../index.php" class="btn btn-secondary me-md-2">Cancelar</a>
+        <a href="../../../index.php" class="btn btn-secondary me-md-2">Cancelar</a>
         <button type="submit" class="btn btn-success"><i class="bi bi-save"></i> Guardar Perfil Renal</button>
     </div>
 </form>

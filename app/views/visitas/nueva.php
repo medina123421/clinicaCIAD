@@ -43,15 +43,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $datos = [
             'id_paciente' => $id_paciente,
-            'id_doctor' => $_SESSION['usuario_id'], // El usuario actual es el doctor/registrador
+            'id_doctor' => $_SESSION['usuario_id'],
             'fecha_visita' => $_POST['fecha_visita'] . ' ' . $_POST['hora_visita'],
             'tipo_visita' => $_POST['tipo_visita'],
-            'motivo_consulta' => trim($_POST['motivo_consulta']),
-            'diagnostico' => trim($_POST['diagnostico']),
-            'plan_tratamiento' => trim($_POST['plan_tratamiento']),
-            'observaciones' => trim($_POST['observaciones']),
+            'numero_visita' => $_POST['numero_visita'] ?? null,
+            'diagnostico' => trim($_POST['diagnostico'] ?? ''),
+            'plan_tratamiento' => trim($_POST['plan_tratamiento'] ?? ''),
+            'observaciones' => trim($_POST['observaciones'] ?? ''),
             'proxima_cita' => !empty($_POST['proxima_cita']) ? $_POST['proxima_cita'] : null,
-            'estatus' => $_POST['estatus']
+            'estatus' => $_POST['estatus'] ?? 'Programada'
         ];
 
         try {
@@ -127,10 +127,10 @@ include '../../includes/header.php';
         </div>
     </div>
 
-    <!-- Detalles de la Visita -->
+    <!-- Programación de la Visita -->
     <div class="card mb-4">
-        <div class="card-header">
-            <i class="bi bi-clipboard-data"></i> Detalles de la Consulta
+        <div class="card-header bg-primary text-white">
+            <i class="bi bi-calendar-check"></i> Programación de la Visita
         </div>
         <div class="card-body">
             <div class="row g-3">
@@ -152,27 +152,31 @@ include '../../includes/header.php';
                     </select>
                 </div>
 
-                <div class="col-12">
-                    <label class="form-label">Motivo de Consulta</label>
-                    <textarea class="form-control" name="motivo_consulta" rows="2" required></textarea>
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Número de Visita</label>
+                    <select class="form-select" name="numero_visita">
+                        <option value="">-- Seleccionar --</option>
+                        <option value="V1">V1</option>
+                        <option value="V2">V2</option>
+                        <option value="V3">V3</option>
+                        <option value="V4">V4</option>
+                        <option value="SEG1">SEG1</option>
+                        <option value="SEG2">SEG2</option>
+                        <option value="SEG3">SEG3</option>
+                        <option value="SEG4">SEG4</option>
+                        <option value="SEG5">SEG5</option>
+                        <option value="SEG6">SEG6</option>
+                        <option value="SEG7">SEG7</option>
+                        <option value="SEG8">SEG8</option>
+                    </select>
                 </div>
 
-                <div class="col-12">
-                    <label class="form-label">Diagnóstico</label>
-                    <textarea class="form-control" name="diagnostico" rows="3"></textarea>
-                </div>
-
-                <div class="col-12">
-                    <label class="form-label">Plan de Tratamiento</label>
-                    <textarea class="form-control" name="plan_tratamiento" rows="3"></textarea>
-                </div>
-
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <label class="form-label">Estatus</label>
                     <select class="form-select" name="estatus">
                         <option value="Completada">Completada</option>
                         <option value="En Curso">En Curso</option>
-                        <option value="Programada">Programada</option>
+                        <option value="Programada" selected>Programada</option>
                         <option value="Cancelada">Cancelada</option>
                     </select>
                 </div>
@@ -180,11 +184,6 @@ include '../../includes/header.php';
                 <div class="col-md-6">
                     <label class="form-label">Próxima Cita (Opcional)</label>
                     <input type="date" class="form-control" name="proxima_cita" min="<?= date('Y-m-d') ?>">
-                </div>
-
-                <div class="col-12">
-                    <label class="form-label">Observaciones Adicionales</label>
-                    <textarea class="form-control" name="observaciones" rows="2"></textarea>
                 </div>
             </div>
         </div>

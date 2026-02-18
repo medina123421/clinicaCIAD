@@ -20,20 +20,21 @@ class Visita
     public function crear($datos, $usuario_id)
     {
         $query = "INSERT INTO " . $this->table_name . "
-                  (id_paciente, id_doctor, fecha_visita, tipo_visita, motivo_consulta, 
-                   diagnostico, plan_tratamiento, observaciones, proxima_cita, estatus, created_by)
-                  VALUES 
-                  (:id_paciente, :id_doctor, :fecha_visita, :tipo_visita, :motivo_consulta,
-                   :diagnostico, :plan_tratamiento, :observaciones, :proxima_cita, :estatus, :created_by)";
+              (id_paciente, id_doctor, fecha_visita, tipo_visita, numero_visita,
+               diagnostico, plan_tratamiento, observaciones, proxima_cita, estatus, created_by)
+              VALUES 
+              (:id_paciente, :id_doctor, :fecha_visita, :tipo_visita, :numero_visita,
+               :diagnostico, :plan_tratamiento, :observaciones, :proxima_cita, :estatus, :created_by)";
 
         $stmt = $this->conn->prepare($query);
 
         // Bind parameters
         $stmt->bindParam(':id_paciente', $datos['id_paciente'], PDO::PARAM_INT);
-        $stmt->bindParam(':id_doctor', $datos['id_doctor'], PDO::PARAM_INT); // Puede ser el mismo usuario_id si es doctor
+        $stmt->bindParam(':id_doctor', $datos['id_doctor'], PDO::PARAM_INT);
         $stmt->bindParam(':fecha_visita', $datos['fecha_visita']);
         $stmt->bindParam(':tipo_visita', $datos['tipo_visita']);
-        $stmt->bindParam(':motivo_consulta', $datos['motivo_consulta']);
+        $numero_visita = $datos['numero_visita'] ?? null;
+        $stmt->bindParam(':numero_visita', $numero_visita);
         $stmt->bindParam(':diagnostico', $datos['diagnostico']);
         $stmt->bindParam(':plan_tratamiento', $datos['plan_tratamiento']);
         $stmt->bindParam(':observaciones', $datos['observaciones']);
@@ -88,6 +89,41 @@ class Visita
 
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':id_paciente', $id_paciente, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Obtener todas las visitas con datos de paciente y doctor
+     */
+    public function obtenerTodas($search = '', $limit = 7)
+    {
+        $query = "SELECT v.*, 
+                  CONCAT(p.nombre, ' ', p.apellido_paterno, ' ', IFNULL(p.apellido_materno, '')) as paciente_nombre,
+                  p.numero_expediente,
+                  CONCAT(u.nombre, ' ', u.apellido_paterno) as doctor_nombre
+                  FROM " . $this->table_name . " v
+                  JOIN pacientes p ON v.id_paciente = p.id_paciente
+                  JOIN usuarios u ON v.id_doctor = u.id_usuario";
+
+        if (!empty($search)) {
+            $query .= " WHERE p.nombre LIKE :search 
+                        OR p.apellido_paterno LIKE :search 
+                        OR p.numero_expediente LIKE :search
+                        OR v.motivo_consulta LIKE :search";
+        }
+
+        $query .= " ORDER BY v.fecha_visita DESC LIMIT :limit";
+
+        $stmt = $this->conn->prepare($query);
+
+        if (!empty($search)) {
+            $searchTerm = "%$search%";
+            $stmt->bindParam(':search', $searchTerm);
+        }
+
+        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
         $stmt->execute();
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);

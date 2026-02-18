@@ -30,8 +30,8 @@ class Database
             // Configurar PDO para lanzar excepciones en errores
             $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-            // Usar prepared statements emulados para mayor compatibilidad
-            $this->conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+            // Usar prepared statements emulados para permitir múltiples usos del mismo parámetro nombrado
+            $this->conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
 
         } catch (PDOException $e) {
             error_log("Error de conexión a la base de datos: " . $e->getMessage());

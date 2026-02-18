@@ -206,7 +206,7 @@ include '../../includes/header.php';
             <h2><i class="bi bi-file-medical"></i> Registro de Resultados de Laboratorio</h2>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="../../index.php">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="../../../index.php">Dashboard</a></li>
                     <li class="breadcrumb-item active">Resultados Completos</li>
                 </ol>
             </nav>
@@ -228,7 +228,8 @@ include '../../includes/header.php';
                 <div class="row">
                     <div class="col-md-6">
                         <label class="form-label">Buscar Paciente</label>
-                        <input class="form-control" list="datalistOptions" id="busqueda_paciente" required>
+                        <input class="form-control" list="datalistOptions" id="busqueda_paciente" autocomplete="off"
+                            required>
                         <datalist id="datalistOptions">
                             <?php foreach ($pacientes as $paciente): ?>
                                 <option data-id="<?= $paciente['id_paciente'] ?>"

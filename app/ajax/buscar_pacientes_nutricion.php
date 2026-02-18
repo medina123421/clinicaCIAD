@@ -1,0 +1,76 @@
+<?php
+/**
+ * AJAX: Buscar Pacientes para Nutrición Clínica
+ * Retorna lista de pacientes con enlaces a sus visitas
+ */
+
+require_once '../../config/database.php';
+require_once '../../models/Paciente.php';
+
+header('Content-Type: application/json');
+
+$search = $_GET['search'] ?? '';
+
+if (strlen($search) < 2) {
+    echo json_encode(['success' => true, 'html' => '']);
+    exit();
+}
+
+try {
+    $database = new Database();
+    $db = $database->getConnection();
+
+    // Búsqueda de pacientes
+    $query = "SELECT p.id_paciente, p.numero_expediente, 
+              CONCAT(p.nombre, ' ', p.apellido_paterno, ' ', IFNULL(p.apellido_materno, '')) as nombre_completo,
+              (SELECT id_visita FROM visitas WHERE id_paciente = p.id_paciente ORDER BY fecha_visita DESC LIMIT 1) as ultima_visita_id,
+              (SELECT fecha_visita FROM visitas WHERE id_paciente = p.id_paciente ORDER BY fecha_visita DESC LIMIT 1) as ultima_visita_fecha
+              FROM pacientes p 
+              WHERE p.activo = 1 AND (
+                  p.nombre LIKE :s OR 
+                  p.apellido_paterno LIKE :s OR 
+                  p.numero_expediente LIKE :s
+              )
+              LIMIT 10";
+
+    $stmt = $db->prepare($query);
+    $searchTerm = "%$search%";
+    $stmt->bindParam(':s', $searchTerm);
+    $stmt->execute();
+    $pacientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $html = '';
+    if (count($pacientes) > 0) {
+        foreach ($pacientes as $p) {
+            $html .= '<div class="list-group-item list-group-item-action p-3 border-bottom">';
+            $html .= '  <div class="d-flex justify-content-between align-items-center">';
+            $html .= '    <div>';
+            $html .= '      <h6 class="mb-1 fw-bold">' . htmlspecialchars($p['nombre_completo']) . '</h6>';
+            $html .= '      <small class="text-muted">' . htmlspecialchars($p['numero_expediente']) . '</small>';
+            $html .= '    </div>';
+
+            if ($p['ultima_visita_id']) {
+                $project_folder = '/Clinica%20InvestLab';
+                $html .= '    <a href="' . $project_folder . '/app/views/especialidades/nutricion.php?id_visita=' . $p['ultima_visita_id'] . '" class="btn btn-sm btn-outline-success rounded-pill">';
+                $html .= '      <i class="bi bi-apple"></i> Abrir Última (' . date('d/m/y', strtotime($p['ultima_visita_fecha'])) . ')';
+                $html .= '    </a>';
+            } else {
+                $html .= '    <span class="badge bg-light text-muted border">Sin visitas</span>';
+            }
+
+            $html .= '  </div>';
+            $html .= '</div>';
+        }
+    } else {
+        $html = '<div class="p-4 text-center text-muted"><i class="bi bi-info-circle mb-2 d-block"></i> No se encontraron pacientes</div>';
+    }
+
+    echo json_encode([
+        'success' => true,
+        'html' => $html
+    ]);
+
+} catch (Exception $e) {
+    error_log("Error en buscar_pacientes_nutricion.php: " . $e->getMessage());
+    echo json_encode(['success' => false, 'message' => 'Error en la búsqueda: ' . $e->getMessage()]);
+}

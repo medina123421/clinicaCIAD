@@ -367,7 +367,8 @@ class Analisis
         }
 
         $query = "SELECT v.id_visita, v.fecha_visita, CONCAT(p.nombre, ' ', p.apellido_paterno, ' ', p.apellido_materno) as nombre_completo, p.numero_expediente,
-                         lbh.id_biometria, lqs.id_quimica, leo.id_orina, lph.id_hepatico, lpt.id_tiroideo, li.id_insulina
+                         lbh.id_biometria, lqs.id_quimica, leo.id_orina, lph.id_hepatico, lpt.id_tiroideo, li.id_insulina,
+                         ag.id_analisis as id_glucosa, apl.id_analisis as id_lipidico, apr.id_analisis as id_renal
                   FROM visitas v
                   JOIN pacientes p ON v.id_paciente = p.id_paciente
                   LEFT JOIN lab_biometria_hematica lbh ON v.id_visita = lbh.id_visita
@@ -376,12 +377,18 @@ class Analisis
                   LEFT JOIN lab_perfil_hepatico lph ON v.id_visita = lph.id_visita
                   LEFT JOIN lab_perfil_tiroideo lpt ON v.id_visita = lpt.id_visita
                   LEFT JOIN lab_insulina li ON v.id_visita = li.id_visita
+                  LEFT JOIN analisis_glucosa ag ON v.id_visita = ag.id_visita
+                  LEFT JOIN analisis_perfil_lipidico apl ON v.id_visita = apl.id_visita
+                  LEFT JOIN analisis_perfil_renal apr ON v.id_visita = apr.id_visita
                   WHERE (lbh.id_biometria IS NOT NULL 
                      OR lqs.id_quimica IS NOT NULL 
                      OR leo.id_orina IS NOT NULL
                      OR lph.id_hepatico IS NOT NULL
                      OR lpt.id_tiroideo IS NOT NULL
-                     OR li.id_insulina IS NOT NULL)
+                     OR li.id_insulina IS NOT NULL
+                     OR ag.id_analisis IS NOT NULL
+                     OR apl.id_analisis IS NOT NULL
+                     OR apr.id_analisis IS NOT NULL)
                   $condicion_fecha
                   ORDER BY v.fecha_visita DESC";
 
@@ -396,7 +403,10 @@ class Analisis
     {
         $query = "SELECT v.fecha_visita, 
                           p.nombre, p.apellido_paterno, p.apellido_materno, p.numero_expediente, p.fecha_nacimiento, p.sexo,
-                         lbh.*, lqs.*, leo.*, lph.*, lpt.*, li.*
+                         lbh.*, lqs.*, leo.*, lph.*, lpt.*, li.*,
+                         ag.id_analisis as id_glucosa, ag.glucosa_ayunas, ag.glucosa_postprandial_2h, ag.hemoglobina_glicosilada, ag.interpretacion_glucosa_ayunas, ag.interpretacion_hba1c,
+                         apl.id_analisis as id_lipidico, apl.colesterol_total, apl.ldl, apl.hdl, apl.trigliceridos, apl.interpretacion_colesterol, apl.interpretacion_ldl, apl.interpretacion_hdl, apl.interpretacion_trigliceridos,
+                         apr.id_analisis as id_renal, apr.creatinina_serica, apr.tasa_filtracion_glomerular, apr.urea as urea_renal, apr.bun as bun_renal, apr.microalbuminuria, apr.relacion_albumina_creatinina, apr.interpretacion_tfg, apr.interpretacion_microalbuminuria
                   FROM visitas v
                   JOIN pacientes p ON v.id_paciente = p.id_paciente
                   LEFT JOIN lab_biometria_hematica lbh ON v.id_visita = lbh.id_visita
@@ -405,6 +415,9 @@ class Analisis
                   LEFT JOIN lab_perfil_hepatico lph ON v.id_visita = lph.id_visita
                   LEFT JOIN lab_perfil_tiroideo lpt ON v.id_visita = lpt.id_visita
                   LEFT JOIN lab_insulina li ON v.id_visita = li.id_visita
+                  LEFT JOIN analisis_glucosa ag ON v.id_visita = ag.id_visita
+                  LEFT JOIN analisis_perfil_lipidico apl ON v.id_visita = apl.id_visita
+                  LEFT JOIN analisis_perfil_renal apr ON v.id_visita = apr.id_visita
                   WHERE v.id_visita = :id_visita
                   LIMIT 1";
 
