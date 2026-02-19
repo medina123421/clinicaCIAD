@@ -41,13 +41,13 @@ include '../../includes/header.php';
         <h2><i class="bi bi-calendar-check"></i> Historial de Visitas Médicas</h2>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="../../index.php">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="<?= PROJECT_PATH ?>/index.php">Dashboard</a></li>
                 <li class="breadcrumb-item active">Visitas</li>
             </ol>
         </nav>
     </div>
     <div class="col-md-4 text-end">
-        <a href="<?= $project_folder ?>/app/views/visitas/nueva.php" class="btn btn-primary">
+        <a href="<?= PROJECT_PATH ?>/app/views/visitas/nueva.php" class="btn btn-primary">
             <i class="bi bi-plus-lg"></i> Registrar Nueva Visita
         </a>
     </div>
@@ -141,7 +141,7 @@ include '../../includes/header.php';
     $(document).ready(function () {
         const searchDebounce = debounce(function (searchTerm) {
             searchAjax(
-                '../../ajax/buscar_visitas.php',
+                '<?= PROJECT_PATH ?>/app/ajax/buscar_visitas.php',
                 searchTerm,
                 'table tbody'
             );

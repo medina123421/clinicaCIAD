@@ -176,7 +176,7 @@ include '../../includes/header.php';
         const searchDebounce = debounce(function (searchTerm) {
             if (searchTerm.length >= 2 || searchTerm.length === 0) {
                 searchAjax(
-                    '<?= $project_folder ?>/app/ajax/buscar_pacientes.php',
+                    '<?= PROJECT_PATH ?>/app/ajax/buscar_pacientes.php',
                     searchTerm,
                     '#pacientesTable tbody'
                 );
