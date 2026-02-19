@@ -4,6 +4,7 @@ if (isset($_SESSION['usuario_id'])) {
     header('Location: index.php');
     exit();
 }
+require_once 'app/includes/config.php';
 // Esta ruta debe ser exacta a donde está tu archivo de base de datos
 require_once 'app/config/database.php';
 
@@ -27,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $_SESSION['usuario_id'] = $usuario['id_usuario'];
                     $_SESSION['usuario_nombre'] = $usuario['nombre'] . ' ' . $usuario['apellido_paterno'];
                     $_SESSION['usuario_rol'] = $usuario['nombre_rol'];
-                    header('Location: index.php');
+                    header('Location: ' . PROJECT_PATH . '/index.php');
                     exit();
                 } else {
                     $error = 'Contraseña incorrecta.';
@@ -188,7 +189,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <div class="login-card">
         <div class="login-header">
-            <img src="app/assets/img/logo_ciadi.png" alt="Logo CIADI">
+            <img src="<?= PROJECT_PATH ?>/app/assets/img/logo_ciadi.png" alt="Logo CIADI">
             <h2>CIADI</h2>
             <p class="mb-0 opacity-75">Panel de Gestión Médica</p>
         </div>

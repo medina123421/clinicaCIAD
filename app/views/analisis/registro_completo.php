@@ -206,7 +206,7 @@ include '../../includes/header.php';
             <h2><i class="bi bi-file-medical"></i> Registro de Resultados de Laboratorio</h2>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="../../../index.php">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<?= PROJECT_PATH ?>/index.php">Dashboard</a></li>
                     <li class="breadcrumb-item active">Resultados Completos</li>
                 </ol>
             </nav>

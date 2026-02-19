@@ -6,7 +6,7 @@ include '../../includes/header.php';
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>Actividad Física</h2>
-        <a href="../../index.php" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a>
+        <a href="<?= PROJECT_PATH ?>/index.php" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a>
     </div>
 
     <div class="alert alert-info py-5 text-center shadow-sm">

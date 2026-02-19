@@ -76,8 +76,9 @@ include '../../includes/header.php';
         <h2><i class="bi bi-person-vcard-fill"></i> Detalle del Paciente</h2>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="../../index.php">Dashboard</a></li>
-                <li class="breadcrumb-item"><a href="lista.php">Pacientes</a></li>
+                <li class="breadcrumb-item"><a href="<?= PROJECT_PATH ?>/index.php">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="<?= PROJECT_PATH ?>/app/views/pacientes/lista.php">Pacientes</a>
+                </li>
                 <li class="breadcrumb-item active">
                     <?= htmlspecialchars($paciente['numero_expediente']) ?>
                 </li>
@@ -85,13 +86,14 @@ include '../../includes/header.php';
         </nav>
     </div>
     <div class="col-md-5 d-flex flex-wrap justify-content-end align-items-start gap-2">
-        <a href="../socioeconomico/editar.php?id=<?= $id_paciente ?>" class="btn btn-info text-white">
+        <a href="<?= PROJECT_PATH ?>/app/views/socioeconomico/editar.php?id=<?= $id_paciente ?>"
+            class="btn btn-info text-white">
             <i class="bi bi-file-earmark-person"></i> Estudio Socioeconómico
         </a>
         <a href="editar.php?id=<?= $id_paciente ?>" class="btn btn-warning">
             <i class="bi bi-pencil"></i> Editar
         </a>
-        <a href="../visitas/nueva.php?paciente=<?= $id_paciente ?>" class="btn btn-success">
+        <a href="<?= PROJECT_PATH ?>/app/views/visitas/nueva.php?paciente=<?= $id_paciente ?>" class="btn btn-success">
             <i class="bi bi-calendar-plus"></i> Nueva Visita
         </a>
     </div>
@@ -267,15 +269,15 @@ include '../../includes/header.php';
                         <?php endif; ?>
                         <tr>
                             <td colspan="2" class="text-center pt-3">
-                                <a href="../especialidades/medicina_interna.php?id_visita=<?= $ultima_visita['id_visita'] ?>"
+                                <a href="<?= PROJECT_PATH ?>/app/views/especialidades/medicina_interna.php?id_visita=<?= $ultima_visita['id_visita'] ?>"
                                     class="btn btn-outline-primary btn-sm">
                                     <i class="bi bi-stethoscope"></i> Ver Consulta Medicina Interna
                                 </a>
-                                <a href="../especialidades/nutricion.php?id_visita=<?= $ultima_visita['id_visita'] ?>"
+                                <a href="<?= PROJECT_PATH ?>/app/views/especialidades/nutricion.php?id_visita=<?= $ultima_visita['id_visita'] ?>"
                                     class="btn btn-outline-success btn-sm mt-1">
                                     <i class="bi bi-apple"></i> Ver Consulta Nutrición
                                 </a>
-                                <a href="../especialidades/psicologia.php?id_visita=<?= $ultima_visita['id_visita'] ?>"
+                                <a href="<?= PROJECT_PATH ?>/app/views/especialidades/psicologia.php?id_visita=<?= $ultima_visita['id_visita'] ?>"
                                     class="btn btn-outline-secondary btn-sm mt-1"
                                     style="border-color:#6f42c1;color:#6f42c1">
                                     <i class="bi bi-brain"></i> Ver Consulta Psicología
@@ -286,7 +288,7 @@ include '../../includes/header.php';
                 <?php else: ?>
                     <p class="text-muted text-center mb-0">No hay visitas registradas.</p>
                     <div class="text-center mt-3">
-                        <a href="<?= $project_folder ?>/app/views/visitas/nueva.php?paciente=<?= $id_paciente ?>"
+                        <a href="<?= PROJECT_PATH ?>/app/views/visitas/nueva.php?paciente=<?= $id_paciente ?>"
                             class="btn btn-primary btn-sm">
                             <i class="bi bi-calendar-plus"></i> Registrar Primera Visita
                         </a>
@@ -339,7 +341,7 @@ include '../../includes/header.php';
                 <?php else: ?>
                     <p class="text-muted text-center mb-0">No hay análisis registrados.</p>
                     <div class="text-center mt-3">
-                        <a href="<?= $project_folder ?>/app/views/analisis/glucosa.php?paciente=<?= $id_paciente ?>"
+                        <a href="<?= PROJECT_PATH ?>/app/views/analisis/glucosa.php?paciente=<?= $id_paciente ?>"
                             class="btn btn-primary btn-sm">
                             <i class="bi bi-clipboard2-plus"></i> Registrar Análisis
                         </a>

@@ -113,7 +113,7 @@ $escala_siempre = ['Siempre', 'Casi Siempre', 'Nunca', 'Algunas Veces', 'N/A'];
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0">
                         <li class="breadcrumb-item">
-                            <a href="../pacientes/detalle.php?id=<?= $paciente['id_paciente'] ?>">
+                            <a href="<?= PROJECT_PATH ?>/app/views/pacientes/detalle.php?id=<?= $paciente['id_paciente'] ?>">
                                 <?= htmlspecialchars($paciente['nombre'].' '.$paciente['apellido_paterno']) ?>
                             </a>
                         </li>
@@ -126,13 +126,13 @@ $escala_siempre = ['Siempre', 'Casi Siempre', 'Nunca', 'Algunas Veces', 'N/A'];
             <?php else: ?>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="../../../index.php">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="<?= PROJECT_PATH ?>/index.php">Dashboard</a></li>
                         <li class="breadcrumb-item active">Selección de Paciente</li>
                     </ol>
                 </nav>
             <?php endif; ?>
         </div>
-        <a href="../../../index.php" class="btn btn-light shadow-sm"><i class="bi bi-house"></i> Home</a>
+        <a href="<?= PROJECT_PATH ?>/index.php" class="btn btn-light shadow-sm"><i class="bi bi-house"></i> Home</a>
     </div>
 
     <!-- Mensaje -->

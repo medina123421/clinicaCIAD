@@ -139,7 +139,7 @@ include '../../includes/header.php';
                                     <i class="bi bi-printer-fill"></i>
                                 </a>
                                 <!-- Botón Ver Detalle -->
-                                <a href="../pacientes/detalle.php?id=<?= $fila['id_visita'] ?>&tab=historial"
+                                <a href="<?= PROJECT_PATH ?>/app/views/pacientes/detalle.php?id=<?= $fila['id_visita'] ?>&tab=historial"
                                     class="btn btn-sm btn-outline-info" title="Ver Paciente">
                                     <i class="bi bi-eye"></i>
                                 </a>

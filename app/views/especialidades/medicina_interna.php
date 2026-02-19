@@ -199,7 +199,7 @@ include '../../includes/header.php';
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0">
                         <li class="breadcrumb-item"><a
-                                href="detalle_paciente.php?id=<?= $paciente['id_paciente'] ?>"><?= htmlspecialchars($paciente['nombre'] . ' ' . $paciente['apellido_paterno']) ?></a>
+                                href="<?= PROJECT_PATH ?>/app/views/pacientes/detalle.php?id=<?= $paciente['id_paciente'] ?>"><?= htmlspecialchars($paciente['nombre'] . ' ' . $paciente['apellido_paterno']) ?></a>
                         </li>
                         <li class="breadcrumb-item active">Consulta Médica</li>
                     </ol>
@@ -207,14 +207,14 @@ include '../../includes/header.php';
             <?php else: ?>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="../../../index.php">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="<?= PROJECT_PATH ?>/index.php">Dashboard</a></li>
                         <li class="breadcrumb-item active">Selección de Paciente</li>
                     </ol>
                 </nav>
             <?php endif; ?>
         </div>
         <div class="btn-group">
-            <a href="../../../index.php" class="btn btn-light shadow-sm"><i class="bi bi-house"></i> Home</a>
+            <a href="<?= PROJECT_PATH ?>/index.php" class="btn btn-light shadow-sm"><i class="bi bi-house"></i> Home</a>
         </div>
     </div>
 

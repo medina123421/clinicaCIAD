@@ -79,8 +79,8 @@ include '../../includes/header.php';
         <h2><i class="bi bi-calendar-plus"></i> Registrar Nueva Visita</h2>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="../../index.php">Dashboard</a></li>
-                <li class="breadcrumb-item"><a href="lista.php">Visitas</a></li>
+                <li class="breadcrumb-item"><a href="<?= PROJECT_PATH ?>/index.php">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="<?= PROJECT_PATH ?>/app/views/visitas/lista.php">Visitas</a></li>
                 <li class="breadcrumb-item active">Nueva</li>
             </ol>
         </nav>

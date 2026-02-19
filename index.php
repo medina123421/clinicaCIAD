@@ -164,7 +164,7 @@ include 'app/includes/header.php';
                             <tbody>
                                 <?php foreach ($ultimos_pacientes as $paciente): ?>
                                     <tr class="cursor-pointer"
-                                        onclick="window.location.href='app/views/pacientes/detalle.php?id=<?= $paciente['id_paciente'] ?>'">
+                                        onclick="window.location.href='<?= PROJECT_PATH ?>/app/views/pacientes/detalle.php?id=<?= $paciente['id_paciente'] ?>'">
                                         <td>
                                             <?= htmlspecialchars($paciente['numero_expediente']) ?>
                                         </td>
@@ -183,7 +183,7 @@ include 'app/includes/header.php';
                         </table>
                     </div>
                     <div class="text-center mt-3">
-                        <a href="app/views/pacientes/lista.php" class="btn btn-primary btn-sm">
+                        <a href="<?= PROJECT_PATH ?>/app/views/pacientes/lista.php" class="btn btn-primary btn-sm">
                             <i class="bi bi-list-ul"></i> Ver Todos los Pacientes
                         </a>
                     </div>
@@ -201,16 +201,16 @@ include 'app/includes/header.php';
             </div>
             <div class="card-body">
                 <div class="d-grid gap-2">
-                    <a href="<?= $project_folder ?>/app/views/pacientes/nuevo.php" class="btn btn-primary">
+                    <a href="<?= PROJECT_PATH ?>/app/views/pacientes/nuevo.php" class="btn btn-primary">
                         <i class="bi bi-person-plus"></i> Registrar Nuevo Paciente
                     </a>
-                    <a href="<?= $project_folder ?>/app/views/visitas/nueva.php" class="btn btn-success">
+                    <a href="<?= PROJECT_PATH ?>/app/views/visitas/nueva.php" class="btn btn-success">
                         <i class="bi bi-calendar-plus"></i> Registrar Nueva Visita
                     </a>
-                    <a href="<?= $project_folder ?>/app/views/analisis/glucosa.php" class="btn btn-info text-white">
+                    <a href="<?= PROJECT_PATH ?>/app/views/analisis/glucosa.php" class="btn btn-info text-white">
                         <i class="bi bi-clipboard2-pulse"></i> Registrar Análisis de Glucosa
                     </a>
-                    <a href="<?= $project_folder ?>/app/views/reportes/index.php" class="btn btn-warning">
+                    <a href="<?= PROJECT_PATH ?>/app/views/reportes/index.php" class="btn btn-warning">
                         <i class="bi bi-file-earmark-pdf"></i> Generar Reportes
                     </a>
                 </div>
