@@ -14,7 +14,7 @@ $database = new Database();
 $db = $database->getConnection();
 $paciente_model = new Paciente($db);
 
-$pacientes = $paciente_model->obtenerTodos();
+$pacientes = $paciente_model->obtenerTodos('', 7);
 
 include '../../includes/header.php';
 ?>
@@ -113,8 +113,13 @@ include '../../includes/header.php';
                                 <td>
                                     <div class="d-flex gap-1">
                                         <a href="detalle.php?id=<?= $paciente['id_paciente'] ?>"
-                                            class="btn btn-info btn-sm text-white" title="Ver Detalle">
+                                            class="btn btn-info btn-sm text-white" title="Ver Detalle" data-bs-toggle="tooltip">
                                             <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="historial.php?id=<?= $paciente['id_paciente'] ?>"
+                                            class="btn btn-primary btn-sm" title="Expediente de Paciente"
+                                            data-bs-toggle="tooltip">
+                                            <i class="bi bi-person-bounding-box"></i>
                                         </a>
                                         <a href="editar.php?id=<?= $paciente['id_paciente'] ?>"
                                             class="btn btn-warning btn-sm text-white" title="Editar">
@@ -171,7 +176,7 @@ include '../../includes/header.php';
         const searchDebounce = debounce(function (searchTerm) {
             if (searchTerm.length >= 2 || searchTerm.length === 0) {
                 searchAjax(
-                    '<?= $project_folder ?>/app/ajax/buscar_pacientes.php',
+                    '<?= PROJECT_PATH ?>/app/ajax/buscar_pacientes.php',
                     searchTerm,
                     '#pacientesTable tbody'
                 );

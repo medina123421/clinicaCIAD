@@ -199,7 +199,7 @@ include '../../includes/header.php';
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0">
                         <li class="breadcrumb-item"><a
-                                href="detalle_paciente.php?id=<?= $paciente['id_paciente'] ?>"><?= htmlspecialchars($paciente['nombre'] . ' ' . $paciente['apellido_paterno']) ?></a>
+                                href="<?= PROJECT_PATH ?>/app/views/pacientes/detalle.php?id=<?= $paciente['id_paciente'] ?>"><?= htmlspecialchars($paciente['nombre'] . ' ' . $paciente['apellido_paterno']) ?></a>
                         </li>
                         <li class="breadcrumb-item active">Consulta Médica</li>
                     </ol>
@@ -207,16 +207,14 @@ include '../../includes/header.php';
             <?php else: ?>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="../../index.php">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="<?= PROJECT_PATH ?>/index.php">Dashboard</a></li>
                         <li class="breadcrumb-item active">Selección de Paciente</li>
                     </ol>
                 </nav>
             <?php endif; ?>
         </div>
         <div class="btn-group">
-            <a href="../../index.php" class="btn btn-light shadow-sm"><i class="bi bi-house"></i> Home</a>
-            <a href="../visitas/lista.php" class="btn btn-primary shadow-sm"><i class="bi bi-clipboard-data"></i>
-                Visitas</a>
+            <a href="<?= PROJECT_PATH ?>/index.php" class="btn btn-light shadow-sm"><i class="bi bi-house"></i> Home</a>
         </div>
     </div>
 
@@ -237,21 +235,24 @@ include '../../includes/header.php';
                         <span>Seleccionar Paciente para Consulta</span>
                     </div>
                     <div class="card-body p-4">
-                        <p class="text-muted mb-4">Busque y seleccione al paciente para realizar o actualizar su registro de Medicina Interna de forma directa.</p>
+                        <p class="text-muted mb-4">Busque y seleccione al paciente para realizar o actualizar su registro de
+                            Medicina Interna de forma directa.</p>
                         <div class="search-box mb-4">
                             <i class="bi bi-search text-muted"></i>
-                            <input type="text" class="form-control form-control-lg border-primary border-opacity-25" 
-                                   id="patientSelectionInput" placeholder="Buscar por nombre o número de expediente...">
+                            <input type="text" class="form-control form-control-lg border-primary border-opacity-25"
+                                id="patientSelectionInput" placeholder="Buscar por nombre o número de expediente...">
                         </div>
-                        
-                        <div id="patientSelectionList" class="list-group list-group-flush shadow-sm rounded-3 border" style="max-height: 400px; overflow-y: auto;">
+
+                        <div id="patientSelectionList" class="list-group list-group-flush shadow-sm rounded-3 border"
+                            style="max-height: 400px; overflow-y: auto;">
                             <?php foreach ($lista_pacientes as $p): ?>
-                                <a href="?id_paciente=<?= $p['id_paciente'] ?>" 
-                                   class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3 patient-item"
-                                   data-search="<?= strtolower($p['nombre_completo'] . ' ' . $p['numero_expediente']) ?>">
+                                <a href="?id_paciente=<?= $p['id_paciente'] ?>"
+                                    class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3 patient-item"
+                                    data-search="<?= strtolower($p['nombre_completo'] . ' ' . $p['numero_expediente']) ?>">
                                     <div>
                                         <div class="fw-bold fs-6"><?= htmlspecialchars($p['nombre_completo']) ?></div>
-                                        <small class="text-muted"><i class="bi bi-hash"></i> Exp: <?= htmlspecialchars($p['numero_expediente']) ?></small>
+                                        <small class="text-muted"><i class="bi bi-hash"></i> Exp:
+                                            <?= htmlspecialchars($p['numero_expediente']) ?></small>
                                     </div>
                                     <span class="btn btn-outline-primary btn-sm rounded-pill px-3">
                                         Seleccionar <i class="bi bi-chevron-right ms-1"></i>
@@ -259,18 +260,19 @@ include '../../includes/header.php';
                                 </a>
                             <?php endforeach; ?>
                         </div>
-                        
+
                         <div class="alert alert-info mt-4 border-0 shadow-sm">
                             <i class="bi bi-info-circle-fill me-2"></i>
-                            Si el paciente no aparece en la lista, por favor verifique que la secretaria lo haya dado de alta correctamente.
+                            Si el paciente no aparece en la lista, por favor verifique que la secretaria lo haya dado de
+                            alta correctamente.
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        
+
         <script>
-            document.getElementById('patientSelectionInput').addEventListener('input', function() {
+            document.getElementById('patientSelectionInput').addEventListener('input', function () {
                 const search = this.value.toLowerCase();
                 const items = document.querySelectorAll('.patient-item');
                 items.forEach(item => {

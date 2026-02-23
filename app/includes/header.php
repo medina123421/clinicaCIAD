@@ -4,16 +4,13 @@
  * Incluye navegación y estilos
  */
 
+require_once __DIR__ . '/config.php';
+
 // Título de la página (puede ser sobrescrito)
 $page_title = $page_title ?? 'CIADI';
 
-// Definir BASE_URL si no está definida
-// Esto detecta automáticamente si estamos en localhost/Clinica InvestLab o en otra subcarpeta
-// Asumimos que 'app' está dentro de la raíz del proyecto.
-// Una forma robusta es detectar el segmento del script name.
-
-$project_folder = '/Clinica%20InvestLab'; // Ajusta esto si cambias el nombre de la carpeta
-// $base_url = 'http://' . $_SERVER['HTTP_HOST'] . $project_folder;
+// Forzar UTF-8 en la salida
+header('Content-Type: text/html; charset=UTF-8');
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -42,15 +39,15 @@ $project_folder = '/Clinica%20InvestLab'; // Ajusta esto si cambias el nombre de
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 
     <!-- Custom CSS -->
-    <link href="<?= $project_folder ?>/app/assets/css/custom.css" rel="stylesheet">
+    <link href="<?= PROJECT_PATH ?>/app/assets/css/custom.css" rel="stylesheet">
 </head>
 
 <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container-fluid">
-            <a class="navbar-brand" href="<?= $project_folder ?>/index.php">
-                <img src="<?= $project_folder ?>/app/assets/img/logo_ciadi.png" alt="CIADI" height="30"
+            <a class="navbar-brand" href="<?= PROJECT_PATH ?>/index.php">
+                <img src="<?= PROJECT_PATH ?>/app/assets/img/logo_ciadi.png" alt="CIADI" height="30"
                     class="d-inline-block align-top me-2">
                 CIADI
             </a>
@@ -60,27 +57,27 @@ $project_folder = '/Clinica%20InvestLab'; // Ajusta esto si cambias el nombre de
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= $project_folder ?>/index.php">
+                        <a class="nav-link" href="<?= PROJECT_PATH ?>/index.php">
                             <i class="bi bi-speedometer2"></i> Dashboard
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= $project_folder ?>/app/views/pacientes/lista.php">
+                        <a class="nav-link" href="<?= PROJECT_PATH ?>/app/views/pacientes/lista.php">
                             <i class="bi bi-people-fill"></i> Pacientes
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= $project_folder ?>/app/views/visitas/lista.php">
+                        <a class="nav-link" href="<?= PROJECT_PATH ?>/app/views/visitas/lista.php">
                             <i class="bi bi-calendar-check"></i> Visitas
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= $project_folder ?>/app/views/analisis/registro_completo.php">
+                        <a class="nav-link" href="<?= PROJECT_PATH ?>/app/views/analisis/registro_completo.php">
                             <i class="bi bi-clipboard2-pulse"></i> Registrar Análisis
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= $project_folder ?>/app/views/reportes/index.php">
+                        <a class="nav-link" href="<?= PROJECT_PATH ?>/app/views/reportes/index.php">
                             <i class="bi bi-file-earmark-pdf"></i> Reportes
                         </a>
                     </li>
@@ -90,22 +87,22 @@ $project_folder = '/Clinica%20InvestLab'; // Ajusta esto si cambias el nombre de
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item"
-                                    href="<?= $project_folder ?>/app/views/especialidades/medicina_interna.php">Medicina
+                                    href="<?= PROJECT_PATH ?>/app/views/especialidades/medicina_interna.php">Medicina
                                     Interna</a></li>
                             <li><a class="dropdown-item"
-                                    href="<?= $project_folder ?>/app/views/especialidades/nutricion.php">Nutrición
+                                    href="<?= PROJECT_PATH ?>/app/views/especialidades/nutricion.php">Nutrición
                                     Clínica</a></li>
                             <li><a class="dropdown-item"
-                                    href="<?= $project_folder ?>/app/views/especialidades/psicologia.php">Psicología
+                                    href="<?= PROJECT_PATH ?>/app/views/especialidades/psicologia.php">Psicología
                                     Clínica</a></li>
                             <li><a class="dropdown-item"
-                                    href="<?= $project_folder ?>/app/views/especialidades/actividad_fisica.php">Actividad
+                                    href="<?= PROJECT_PATH ?>/app/views/especialidades/actividad_fisica.php">Actividad
                                     Física</a></li>
                             <li><a class="dropdown-item"
-                                    href="<?= $project_folder ?>/app/views/especialidades/cuidado_pies.php">Cuidado de
+                                    href="<?= PROJECT_PATH ?>/app/views/especialidades/cuidado_pies.php">Cuidado de
                                     los pies</a></li>
                             <li><a class="dropdown-item"
-                                    href="<?= $project_folder ?>/app/views/especialidades/educacion_diabetes.php">Educación
+                                    href="<?= PROJECT_PATH ?>/app/views/especialidades/educacion_diabetes.php">Educación
                                     en Diabetes</a></li>
                         </ul>
                     </li>
@@ -117,7 +114,7 @@ $project_folder = '/Clinica%20InvestLab'; // Ajusta esto si cambias el nombre de
                             <?= htmlspecialchars($usuario_nombre ?? 'Usuario') ?>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="<?= $project_folder ?>/logout.php">
+                            <li><a class="dropdown-item" href="<?= PROJECT_PATH ?>/logout.php">
                                     <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
                                 </a></li>
                         </ul>

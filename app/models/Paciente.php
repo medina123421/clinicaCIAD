@@ -17,11 +17,11 @@ class Paciente
     /**
      * Obtener todos los pacientes activos
      */
-    public function obtenerTodos($search = '', $limit = 50, $offset = 0)
+    public function obtenerTodos($search = '', $limit = 7, $offset = 0)
     {
         $query = "SELECT id_paciente, numero_expediente, 
                   CONCAT(nombre, ' ', apellido_paterno, ' ', IFNULL(apellido_materno, '')) as nombre_completo,
-                  edad, sexo, telefono, email, protocolo, fecha_registro
+                  edad, sexo, telefono, email, protocolo, created_at as fecha_registro
                   FROM " . $this->table_name . "
                   WHERE activo = 1";
 
@@ -33,7 +33,7 @@ class Paciente
                         OR email LIKE :search)";
         }
 
-        $query .= " ORDER BY fecha_registro DESC LIMIT :limit OFFSET :offset";
+        $query .= " ORDER BY created_at DESC LIMIT :limit OFFSET :offset";
 
         $stmt = $this->conn->prepare($query);
 

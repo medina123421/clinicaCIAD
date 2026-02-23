@@ -28,7 +28,7 @@ $query = "SELECT v.*,
           JOIN pacientes p ON v.id_paciente = p.id_paciente
           JOIN usuarios u ON v.id_doctor = u.id_usuario
           ORDER BY v.fecha_visita DESC
-          LIMIT 50";
+          LIMIT 7";
 $stmt = $db->prepare($query);
 $stmt->execute();
 $visitas = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -41,15 +41,26 @@ include '../../includes/header.php';
         <h2><i class="bi bi-calendar-check"></i> Historial de Visitas Médicas</h2>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="../../index.php">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="<?= PROJECT_PATH ?>/index.php">Dashboard</a></li>
                 <li class="breadcrumb-item active">Visitas</li>
             </ol>
         </nav>
     </div>
     <div class="col-md-4 text-end">
-        <a href="<?= $project_folder ?>/app/views/visitas/nueva.php" class="btn btn-primary">
+        <a href="<?= PROJECT_PATH ?>/app/views/visitas/nueva.php" class="btn btn-primary">
             <i class="bi bi-plus-lg"></i> Registrar Nueva Visita
         </a>
+    </div>
+</div>
+
+<!-- Búsqueda -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="search-box">
+            <i class="bi bi-search"></i>
+            <input type="text" class="form-control" id="visitaSearchInput"
+                placeholder="Buscar por paciente o número de expediente...">
+        </div>
     </div>
 </div>
 
@@ -62,11 +73,9 @@ include '../../includes/header.php';
                         <tr>
                             <th>Fecha</th>
                             <th>Paciente</th>
-                            <th>Doctor</th>
-                            <th>Tipo</th>
-                            <th>Motivo</th>
+                            <th>Tipo de Atencion</th>
+                            <th>Numero Visita</th>
                             <th>Estatus</th>
-                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -80,13 +89,16 @@ include '../../includes/header.php';
                                     <small class="text-muted"><?= htmlspecialchars($visita['numero_expediente']) ?></small>
                                 </td>
                                 <td>
-                                    <?= htmlspecialchars($visita['doctor_nombre']) ?>
+                                    <span class="badge bg-multispecialist">Atención Multidisciplinaria</span>
+                                    <br><small class="text-muted"><?= htmlspecialchars($visita['tipo_visita']) ?></small>
                                 </td>
                                 <td>
-                                    <span class="badge bg-secondary"><?= htmlspecialchars($visita['tipo_visita']) ?></span>
-                                </td>
-                                <td>
-                                    <?= htmlspecialchars(substr($visita['motivo_consulta'], 0, 50)) . (strlen($visita['motivo_consulta']) > 50 ? '...' : '') ?>
+                                    <?php if (!empty($visita['numero_visita'])): ?>
+                                        <span
+                                            class="badge bg-info text-dark"><?= htmlspecialchars($visita['numero_visita']) ?></span>
+                                    <?php else: ?>
+                                        <span class="text-muted small">-</span>
+                                    <?php endif; ?>
                                 </td>
                                 <td>
                                     <?php
@@ -109,16 +121,6 @@ include '../../includes/header.php';
                                     <span
                                         class="badge bg-<?= $estatusColor ?>"><?= htmlspecialchars($visita['estatus']) ?></span>
                                 </td>
-                                <td>
-                                    <a href="../pacientes/detalle.php?id=<?= $visita['id_paciente'] ?>"
-                                        class="btn btn-sm btn-outline-info" title="Ver Paciente">
-                                        <i class="bi bi-person-eye"></i>
-                                    </a>
-                                    <a href="../especialidades/medicina_interna.php?id_visita=<?= $visita['id_visita'] ?>"
-                                        class="btn btn-sm btn-outline-primary" title="Consulta Medicina Interna">
-                                        <i class="bi bi-stethoscope"></i>
-                                    </a>
-                                </td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
@@ -131,5 +133,21 @@ include '../../includes/header.php';
         <?php endif; ?>
     </div>
 </div>
+
+<script>
+    $(document).ready(function () {
+        const searchDebounce = debounce(function (searchTerm) {
+            searchAjax(
+                '<?= PROJECT_PATH ?>/app/ajax/buscar_visitas.php',
+                searchTerm,
+                'table tbody'
+            );
+        }, 500);
+
+        $('#visitaSearchInput').on('keyup', function () {
+            searchDebounce($(this).val());
+        });
+    });
+</script>
 
 <?php include '../../includes/footer.php'; ?>
