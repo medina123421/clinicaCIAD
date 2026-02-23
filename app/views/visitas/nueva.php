@@ -180,6 +180,12 @@ include '../../includes/header.php';
                         <option value="Cancelada">Cancelada</option>
                     </select>
                 </div>
+                <div class="col-md-12 mt-2">
+                    <div class="alert alert-info py-2">
+                        <i class="bi bi-info-circle"></i> Esta visita será atendida por el equipo multidisciplinario de
+                        CIADI.
+                    </div>
+                </div>
 
                 <div class="col-md-6">
                     <label class="form-label">Próxima Cita (Opcional)</label>

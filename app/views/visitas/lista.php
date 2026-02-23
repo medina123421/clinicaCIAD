@@ -73,9 +73,8 @@ include '../../includes/header.php';
                         <tr>
                             <th>Fecha</th>
                             <th>Paciente</th>
-                            <th>Doctor</th>
-                            <th>Tipo</th>
-                            <th>Número Visita</th>
+                            <th>Tipo de Atencion</th>
+                            <th>Numero Visita</th>
                             <th>Estatus</th>
                         </tr>
                     </thead>
@@ -90,10 +89,8 @@ include '../../includes/header.php';
                                     <small class="text-muted"><?= htmlspecialchars($visita['numero_expediente']) ?></small>
                                 </td>
                                 <td>
-                                    <?= htmlspecialchars($visita['doctor_nombre']) ?>
-                                </td>
-                                <td>
-                                    <span class="badge bg-secondary"><?= htmlspecialchars($visita['tipo_visita']) ?></span>
+                                    <span class="badge bg-multispecialist">Atención Multidisciplinaria</span>
+                                    <br><small class="text-muted"><?= htmlspecialchars($visita['tipo_visita']) ?></small>
                                 </td>
                                 <td>
                                     <?php if (!empty($visita['numero_visita'])): ?>
