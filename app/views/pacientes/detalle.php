@@ -30,10 +30,8 @@ if (!$paciente) {
 
 // Obtener última visita
 $query = "SELECT v.*, 
-          CONCAT(u.nombre, ' ', u.apellido_paterno) as nombre_doctor,
-          dc.peso, dc.talla, dc.imc, dc.presion_arterial_sistolica, dc.presion_arterial_diastolica
+          dc.peso, dc.talla, dc.imc, dc.presion_sistolica, dc.presion_diastolica
           FROM visitas v
-          LEFT JOIN usuarios u ON v.id_doctor = u.id_usuario
           LEFT JOIN datos_clinicos dc ON v.id_visita = dc.id_visita
           WHERE v.id_paciente = :id
           ORDER BY v.fecha_visita DESC
@@ -235,9 +233,9 @@ include '../../includes/header.php';
                             </td>
                         </tr>
                         <tr>
-                            <th>Doctor:</th>
+                            <th>Atención:</th>
                             <td>
-                                <?= htmlspecialchars($ultima_visita['nombre_doctor']) ?>
+                                <span class="badge bg-info text-dark">Equipo Multidisciplinario</span>
                             </td>
                         </tr>
                         <tr>
@@ -262,8 +260,8 @@ include '../../includes/header.php';
                             <tr>
                                 <th>Presión Arterial:</th>
                                 <td>
-                                    <?= $ultima_visita['presion_arterial_sistolica'] ?>/
-                                    <?= $ultima_visita['presion_arterial_diastolica'] ?> mmHg
+                                    <?= $ultima_visita['presion_sistolica'] ?>/
+                                    <?= $ultima_visita['presion_diastolica'] ?> mmHg
                                 </td>
                             </tr>
                         <?php endif; ?>

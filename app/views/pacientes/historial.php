@@ -119,7 +119,7 @@ include '../../includes/header.php';
                                     <th>Fecha y Hora</th>
                                     <th>Tipo</th>
                                     <th>Estatus</th>
-                                    <th>Doctor</th>
+                                    <th>Atención</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
@@ -137,7 +137,7 @@ include '../../includes/header.php';
                                                 <?= htmlspecialchars($v['estatus']) ?>
                                             </span></td>
                                         <td>
-                                            <?= htmlspecialchars($v['doctor_nombre']) ?>
+                                            <span class="badge bg-info text-dark">Equipo Multidisciplinario</span>
                                         </td>
                                         <td>
                                             <a href="../visitas/lista.php" class="btn btn-sm btn-outline-secondary">Ver en

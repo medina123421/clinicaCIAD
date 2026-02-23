@@ -8,6 +8,9 @@ require_once __DIR__ . '/config.php';
 
 // Título de la página (puede ser sobrescrito)
 $page_title = $page_title ?? 'CIADI';
+
+// Forzar UTF-8 en la salida
+header('Content-Type: text/html; charset=UTF-8');
 ?>
 <!DOCTYPE html>
 <html lang="es">
