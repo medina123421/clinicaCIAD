@@ -21,11 +21,11 @@ try {
     if ($paciente_model->eliminar($id)) {
         header('Location: lista.php?mensaje=eliminado');
     } else {
-        header('Location: lista.php?error=error_eliminar');
+        header('Location: lista.php?error=error_eliminar&msg=' . urlencode('No se pudo actualizar el estado del paciente en la base de datos.'));
     }
+} catch (PDOException $e) {
+    header('Location: lista.php?error=error_db&msg=' . urlencode("Error de base de datos: " . $e->getMessage()));
 } catch (Exception $e) {
-    // Debug: Puedes descomentar esto si necesitas ver el error exacto
-    // die("Error: " . $e->getMessage());
-    header('Location: lista.php?error=error_sistema&msg=' . urlencode($e->getMessage()));
+    header('Location: lista.php?error=error_sistema&msg=' . urlencode("Error de sistema: " . $e->getMessage()));
 }
 exit();
