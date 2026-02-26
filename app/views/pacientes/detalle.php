@@ -267,19 +267,24 @@ include '../../includes/header.php';
                         <?php endif; ?>
                         <tr>
                             <td colspan="2" class="text-center pt-3">
-                                <a href="<?= PROJECT_PATH ?>/app/views/especialidades/medicina_interna.php?id_visita=<?= $ultima_visita['id_visita'] ?>"
-                                    class="btn btn-outline-primary btn-sm">
-                                    <i class="bi bi-stethoscope"></i> Ver Consulta Medicina Interna
-                                </a>
-                                <a href="<?= PROJECT_PATH ?>/app/views/especialidades/nutricion.php?id_visita=<?= $ultima_visita['id_visita'] ?>"
-                                    class="btn btn-outline-success btn-sm mt-1">
-                                    <i class="bi bi-apple"></i> Ver Consulta Nutrición
-                                </a>
-                                <a href="<?= PROJECT_PATH ?>/app/views/especialidades/psicologia.php?id_visita=<?= $ultima_visita['id_visita'] ?>"
-                                    class="btn btn-outline-secondary btn-sm mt-1"
-                                    style="border-color:#6f42c1;color:#6f42c1">
-                                    <i class="bi bi-brain"></i> Ver Consulta Psicología
-                                </a>
+                                <div class="d-flex flex-wrap justify-content-center gap-2">
+                                    <a href="../especialidades/medicina_interna.php?id_visita=<?= $ultima_visita['id_visita'] ?>"
+                                       class="btn btn-outline-primary btn-sm">
+                                        <i class="bi bi-stethoscope"></i> Medicina Interna
+                                    </a>
+                                    <a href="../especialidades/actividad_fisica.php?id_visita=<?= $ultima_visita['id_visita'] ?>"
+                                       class="btn btn-outline-success btn-sm">
+                                        <i class="bi bi-activity"></i> Actividad Física
+                                    </a>
+                                    <a href="../especialidades/cuidado_pies.php?id_visita=<?= $ultima_visita['id_visita'] ?>"
+                                       class="btn btn-outline-info btn-sm">
+                                        <i class="bi bi-person-walking"></i> Cuidado de Pies
+                                    </a>
+                                    <a href="../especialidades/educacion_diabetes.php?id_visita=<?= $ultima_visita['id_visita'] ?>"
+                                       class="btn btn-outline-warning btn-sm">
+                                        <i class="bi bi-mortarboard"></i> Educación en Diabetes
+                                    </a>
+                                </div>
                             </td>
                         </tr>
                     </table>
