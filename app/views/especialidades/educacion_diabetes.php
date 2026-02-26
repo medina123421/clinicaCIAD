@@ -346,7 +346,7 @@ include '../../includes/header.php';
                             <div class="card-body">
                                 <div class="form-check mb-2">
                                     <input class="form-check-input" type="checkbox" name="conocimientos_deficientes_nutricion" id="conocimientos_deficientes_nutricion" 
-                                           <?= isChecked($datos, 'conocimientos_deficientes_nutricion') ?>>
+                                           <?= !empty($datos['conocimientos_deficientes_nutricion']) ? 'checked' : '' ?>>
                                     <label class="form-check-label" for="conocimientos_deficientes_nutricion">
                                         Conocimientos deficientes sobre alimentación y nutrición
                                     </label>
@@ -412,7 +412,7 @@ include '../../includes/header.php';
                                 </div>
                                 <div class="mb-0">
                                     <label for="otras_barreras" class="form-label">Otras barreras:</label>
-                                    <textarea class="form-control" name="otras_barreras" id="otras_barreras" rows="2"><?= getValue($datos, 'otras_barreras') ?></textarea>
+                                    <textarea class="form-control" name="otras_barreras" id="otras_barreras" rows="2"><?= $datos['otras_barreras'] ?? '' ?></textarea>
                                 </div>
                             </div>
                         </div>
@@ -433,9 +433,9 @@ include '../../includes/header.php';
                                     <div class="col-md-6 mb-3">
                                         <label for="tecnica_seleccion_jeringa" class="form-label">Selección de jeringa/aguja:</label>
                                         <select class="form-select" name="tecnica_seleccion_jeringa" id="tecnica_seleccion_jeringa">
-                                            <option value="No" <?= isSelected($datos, 'tecnica_seleccion_jeringa', 'No') ?>>No</option>
-                                            <option value="En Proceso" <?= isSelected($datos, 'tecnica_seleccion_jeringa', 'En Proceso') ?>>En Proceso</option>
-                                            <option value="Sí" <?= isSelected($datos, 'tecnica_seleccion_jeringa', 'Sí') ?>>Sí</option>
+                                            <option value="No" <?= ($datos['tecnica_seleccion_jeringa'] ?? '') == 'No' ? 'selected' : '' ?>>No</option>
+                                            <option value="En Proceso" <?= ($datos['tecnica_seleccion_jeringa'] ?? '') == 'En Proceso' ? 'selected' : '' ?>>En Proceso</option>
+                                            <option value="Sí" <?= ($datos['tecnica_seleccion_jeringa'] ?? '') == 'Sí' ? 'selected' : '' ?>>Sí</option>
                                         </select>
                                     </div>
                                     <div class="col-md-6 mb-3">
