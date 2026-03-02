@@ -40,89 +40,141 @@ header('Content-Type: text/html; charset=UTF-8');
 
     <!-- Custom CSS -->
     <link href="<?= PROJECT_PATH ?>/app/assets/css/custom.css" rel="stylesheet">
+    <link href="<?= PROJECT_PATH ?>/app/assets/css/dashboard.css" rel="stylesheet">
 </head>
 
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="<?= PROJECT_PATH ?>/index.php">
-                <img src="<?= PROJECT_PATH ?>/app/assets/img/logo_ciadi.png" alt="CIADI" height="30"
-                    class="d-inline-block align-top me-2">
-                CIADI
+    <div class="dashboard-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <a href="<?= PROJECT_PATH ?>/index.php" class="sidebar-logo">
+                <img src="<?= PROJECT_PATH ?>/app/assets/img/logo_ciadi.png" alt="CIADI">
+                <span>CIADI</span>
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
+
+            <div class="nav-section">
+                <div class="nav-section-title">Menú Principal</div>
+                <ul class="nav-links">
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= PROJECT_PATH ?>/index.php">
-                            <i class="bi bi-speedometer2"></i> Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?= PROJECT_PATH ?>/app/views/pacientes/lista.php">
-                            <i class="bi bi-people-fill"></i> Pacientes
+                        <a href="<?= PROJECT_PATH ?>/index.php"
+                            class="nav-link-custom <?= basename($_SERVER['PHP_SELF']) == 'index.php' ? 'active' : '' ?>">
+                            <i class="bi bi-speedometer2"></i>
+                            <span>Dashboard</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= PROJECT_PATH ?>/app/views/visitas/lista.php">
-                            <i class="bi bi-calendar-check"></i> Visitas
+                        <a href="<?= PROJECT_PATH ?>/app/views/pacientes/lista.php"
+                            class="nav-link-custom <?= strpos($_SERVER['PHP_SELF'], 'pacientes') !== false ? 'active' : '' ?>">
+                            <i class="bi bi-people-fill"></i>
+                            <span>Pacientes</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= PROJECT_PATH ?>/app/views/analisis/registro_completo.php">
-                            <i class="bi bi-clipboard2-pulse"></i> Registrar Análisis
+                        <a href="<?= PROJECT_PATH ?>/app/views/visitas/lista.php"
+                            class="nav-link-custom <?= strpos($_SERVER['PHP_SELF'], 'visitas') !== false ? 'active' : '' ?>">
+                            <i class="bi bi-calendar-check"></i>
+                            <span>Visitas</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= PROJECT_PATH ?>/app/views/reportes/index.php">
-                            <i class="bi bi-file-earmark-pdf"></i> Reportes
+                        <a href="<?= PROJECT_PATH ?>/app/views/analisis/registro_completo.php"
+                            class="nav-link-custom <?= strpos($_SERVER['PHP_SELF'], 'analisis') !== false ? 'active' : '' ?>">
+                            <i class="bi bi-clipboard2-pulse"></i>
+                            <span>Registrar Análisis</span>
                         </a>
                     </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-stethoscope"></i> Especialidades
+                    <li class="nav-item">
+                        <a href="<?= PROJECT_PATH ?>/app/views/reportes/index.php"
+                            class="nav-link-custom <?= strpos($_SERVER['PHP_SELF'], 'reportes') !== false ? 'active' : '' ?>">
+                            <i class="bi bi-file-earmark-pdf"></i>
+                            <span>Reportes</span>
                         </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item"
-                                    href="<?= PROJECT_PATH ?>/app/views/especialidades/medicina_interna.php">Medicina
-                                    Interna</a></li>
-                            <li><a class="dropdown-item"
-                                    href="<?= PROJECT_PATH ?>/app/views/especialidades/nutricion.php">Nutrición
-                                    Clínica</a></li>
-                            <li><a class="dropdown-item"
-                                    href="<?= PROJECT_PATH ?>/app/views/especialidades/psicologia.php">Psicología
-                                    Clínica</a></li>
-                            <li><a class="dropdown-item"
-                                    href="<?= PROJECT_PATH ?>/app/views/especialidades/actividad_fisica.php">Actividad
-                                    Física</a></li>
-                            <li><a class="dropdown-item"
-                                    href="<?= PROJECT_PATH ?>/app/views/especialidades/cuidado_pies.php">Cuidado de
-                                    los pies</a></li>
-                            <li><a class="dropdown-item"
-                                    href="<?= PROJECT_PATH ?>/app/views/especialidades/educacion_diabetes.php">Educación
-                                    en Diabetes</a></li>
-                        </ul>
-                    </li>
-                </ul>
-                <ul class="navbar-nav">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-person-circle"></i>
-                            <?= htmlspecialchars($usuario_nombre ?? 'Usuario') ?>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="<?= PROJECT_PATH ?>/logout.php">
-                                    <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
-                                </a></li>
-                        </ul>
                     </li>
                 </ul>
             </div>
-        </div>
-    </nav>
 
-    <!-- Contenido principal -->
-    <div class="container-fluid mt-4">
+            <div class="nav-section">
+                <div class="nav-section-title">Especialidades</div>
+                <ul class="nav-links">
+                    <li class="nav-item">
+                        <a href="<?= PROJECT_PATH ?>/app/views/especialidades/medicina_interna.php"
+                            class="nav-link-custom">
+                            <i class="bi bi-heart-pulse"></i>
+                            <span>Medicina Interna</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?= PROJECT_PATH ?>/app/views/especialidades/nutricion.php" class="nav-link-custom">
+                            <i class="bi bi-clipboard2-data"></i>
+                            <span>Nutrición</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?= PROJECT_PATH ?>/app/views/especialidades/psicologia.php" class="nav-link-custom">
+                            <i class="bi bi-emoji-smile"></i>
+                            <span>Psicología</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?= PROJECT_PATH ?>/app/views/especialidades/actividad_fisica.php"
+                            class="nav-link-custom">
+                            <i class="bi bi-bicycle"></i>
+                            <span>Actividad Física</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?= PROJECT_PATH ?>/app/views/especialidades/cuidado_pies.php" class="nav-link-custom">
+                            <i class="bi bi-bandaid"></i>
+                            <span>Cuidado de Pies</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?= PROJECT_PATH ?>/app/views/especialidades/educacion_diabetes.php"
+                            class="nav-link-custom">
+                            <i class="bi bi-book"></i>
+                            <span>Educación</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="nav-section mt-auto">
+                <div class="nav-section-title">Sesión</div>
+                <ul class="nav-links">
+                    <li class="nav-item">
+                        <a href="<?= PROJECT_PATH ?>/logout.php" class="nav-link-custom text-danger">
+                            <i class="bi bi-box-arrow-right"></i>
+                            <span>Cerrar Sesión</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <header class="top-bar border-bottom">
+                <div></div> <!-- Espacio reservado -->
+
+                <div class="top-bar-icons">
+                    <a href="#" class="icon-btn">
+                        <i class="bi bi-chat-dots"></i>
+                        <span class="badge-dot"></span>
+                    </a>
+                    <a href="#" class="icon-btn">
+                        <i class="bi bi-heart"></i>
+                    </a>
+                    <div class="user-profile">
+                        <div class="user-avatar d-flex align-items-center justify-content-center bg-light">
+                            <i class="bi bi-person"></i>
+                        </div>
+                        <div class="d-none d-md-block">
+                            <div class="fw-bold fs-7"><?= htmlspecialchars($usuario_nombre ?? 'Usuario') ?></div>
+                            <div class="text-muted small"><?= htmlspecialchars($usuario_rol ?? 'Admin') ?></div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="container-fluid p-0">

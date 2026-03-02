@@ -92,35 +92,22 @@ include '../../includes/header.php';
 
 <div class="row">
     <div class="col-md-12">
-        <ul class="nav nav-tabs mb-4" id="expedienteTabs" role="tablist">
-            <li class="nav-item">
-                <button class="nav-link active" id="visitas-tab" data-bs-toggle="tab" data-bs-target="#visitas"
-                    type="button"><i class="bi bi-calendar3"></i> Consultas Agendadas</button>
-            </li>
-            <li class="nav-item">
-                <button class="nav-link" id="analisis-tab" data-bs-toggle="tab" data-bs-target="#analisis"
-                    type="button"><i class="bi bi-clipboard2-pulse"></i> Análisis de Laboratorio</button>
-            </li>
-            <li class="nav-item">
-                <button class="nav-link" id="reportes-tab" data-bs-toggle="tab" data-bs-target="#reportes"
-                    type="button"><i class="bi bi-file-earmark-medical"></i> Reportes Especialidad</button>
-            </li>
-        </ul>
-
-        <div class="tab-content card p-4 shadow-sm" id="expedienteTabsContent">
-            <!-- Pestaña 1: Visitas -->
-            <div class="tab-pane fade show active" id="visitas" role="tabpanel">
-                <h5 class="mb-3 text-primary">Historial de Visitas</h5>
+        <!-- Sección 1: Consultas Agendadas (Historial de Visitas) -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-calendar3"></i> Consultas Agendadas</h5>
+            </div>
+            <div class="card-body">
                 <?php if (count($visitas) > 0): ?>
                     <div class="table-responsive">
-                        <table class="table table-hover">
+                        <table class="table table-hover align-middle">
                             <thead class="table-light">
                                 <tr>
                                     <th>Fecha y Hora</th>
                                     <th>Tipo</th>
                                     <th>Estatus</th>
                                     <th>Atención</th>
-                                    <th>Acciones</th>
+                                    <th>Acciones / Reportes por Especialidad</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -140,8 +127,21 @@ include '../../includes/header.php';
                                             <span class="badge bg-info text-dark">Equipo Multidisciplinario</span>
                                         </td>
                                         <td>
-                                            <a href="../visitas/lista.php" class="btn btn-sm btn-outline-secondary">Ver en
-                                                Lista</a>
+                                            <div class="d-flex flex-wrap gap-2">
+                                                <a href="../especialidades/medicina_interna.php?id_visita=<?= $v['id_visita'] ?>"
+                                                    class="btn btn-sm btn-outline-primary">
+                                                    Ver Consulta Medicina Interna
+                                                </a>
+                                                <a href="../especialidades/nutricion.php?id_visita=<?= $v['id_visita'] ?>"
+                                                    class="btn btn-sm btn-success">
+                                                    <i class="bi bi-apple"></i> Ver Consulta Nutrición
+                                                </a>
+                                                <a href="../especialidades/psicologia.php?id_visita=<?= $v['id_visita'] ?>"
+                                                    class="btn btn-sm btn-outline-purple"
+                                                    style="border-color: #6f42c1; color: #6f42c1;">
+                                                    Ver Consulta Psicología
+                                                </a>
+                                            </div>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -152,13 +152,17 @@ include '../../includes/header.php';
                     <p class="text-center text-muted my-4">No hay visitas registradas para este paciente.</p>
                 <?php endif; ?>
             </div>
+        </div>
 
-            <!-- Pestaña 2: Análisis -->
-            <div class="tab-pane fade" id="analisis" role="tabpanel">
-                <h5 class="mb-3 text-primary">Resultados de Laboratorio</h5>
+        <!-- Sección 2: Análisis de Laboratorio -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="bi bi-clipboard2-pulse"></i> Análisis de Laboratorio</h5>
+            </div>
+            <div class="card-body">
                 <?php if (count($analisis_clinicos) > 0): ?>
                     <div class="table-responsive">
-                        <table class="table table-hover">
+                        <table class="table table-hover align-middle">
                             <thead class="table-light">
                                 <tr>
                                     <th>Fecha</th>
@@ -202,47 +206,6 @@ include '../../includes/header.php';
                 <?php else: ?>
                     <p class="text-center text-muted my-4">No se han encontrado registros de análisis para este paciente.
                     </p>
-                <?php endif; ?>
-            </div>
-
-            <!-- Pestaña 3: Reportes Medicina Interna -->
-            <div class="tab-pane fade" id="reportes" role="tabpanel">
-                <h5 class="mb-3 text-primary">Reportes de Medicina Interna</h5>
-                <?php if (count($reportes_mi) > 0): ?>
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Fecha de Registro</th>
-                                    <th>Tipo de Diabetes</th>
-                                    <th>Control</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($reportes_mi as $mi): ?>
-                                    <tr>
-                                        <td>
-                                            <?= date('d/m/Y', strtotime($mi['fecha_registro'])) ?>
-                                        </td>
-                                        <td>
-                                            <?= htmlspecialchars($mi['tipo_diabetes']) ?>
-                                        </td>
-                                        <td>
-                                            <?= htmlspecialchars($mi['control_actual']) ?>
-                                        </td>
-                                        <td>
-                                            <a href="../especialidades/medicina_interna.php?id_visita=<?= $mi['id_visita'] ?>"
-                                                class="btn btn-sm btn-primary"><i class="bi bi-pencil-square"></i>
-                                                Editar/Ver</a>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                <?php else: ?>
-                    <p class="text-center text-muted my-4">No hay reportes de medicina interna para este paciente.</p>
                 <?php endif; ?>
             </div>
         </div>

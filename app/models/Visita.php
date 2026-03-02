@@ -19,6 +19,34 @@ class Visita
      */
     public function crear($datos, $usuario_id)
     {
+        // 1. Validar capacidad máxima (4 pacientes por día - Solo visitas activas)
+        $fecha_solo = date('Y-m-d', strtotime($datos['fecha_visita']));
+
+        $query_check = "SELECT COUNT(*) as total FROM " . $this->table_name . " 
+                        WHERE DATE(fecha_visita) = :fecha AND estatus != 'Cancelada'";
+        $stmt_check = $this->conn->prepare($query_check);
+        $stmt_check->bindParam(':fecha', $fecha_solo);
+        $stmt_check->execute();
+        $row = $stmt_check->fetch(PDO::FETCH_ASSOC);
+
+        if ($row['total'] >= 4) {
+            throw new Exception("Capacidad máxima alcanzada para este día (4 pacientes).");
+        }
+
+        // 2. Validar que el paciente no tenga ya una cita este día
+        $query_dup = "SELECT COUNT(*) as total FROM " . $this->table_name . " 
+                      WHERE id_paciente = :id_paciente AND DATE(fecha_visita) = :fecha";
+        $stmt_dup = $this->conn->prepare($query_dup);
+        $stmt_dup->bindParam(':id_paciente', $datos['id_paciente'], PDO::PARAM_INT);
+        $stmt_dup->bindParam(':fecha', $fecha_solo);
+        $stmt_dup->execute();
+        $row_dup = $stmt_dup->fetch(PDO::FETCH_ASSOC);
+
+        if ($row_dup['total'] > 0) {
+            throw new Exception("Este paciente ya tiene una cita agendada para este día.");
+        }
+
+        // 3. Proceder con la inserción
         $query = "INSERT INTO " . $this->table_name . "
               (id_paciente, id_doctor, fecha_visita, tipo_visita, numero_visita,
                diagnostico, plan_tratamiento, observaciones, proxima_cita, estatus, created_by)
@@ -124,6 +152,46 @@ class Visita
         }
 
         $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Obtener conteos de visitas por día para un mes específico
+     */
+    /**
+     * Obtener conteos de visitas por día para un rango de fechas
+     */
+    public function obtenerConteosRango($inicio, $fin)
+    {
+        $query = "SELECT DATE(fecha_visita) as fecha, COUNT(*) as total 
+                  FROM " . $this->table_name . " 
+                  WHERE DATE(fecha_visita) >= :inicio AND DATE(fecha_visita) <= :fin
+                  AND estatus != 'Cancelada'
+                  GROUP BY DATE(fecha_visita)";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':inicio', $inicio);
+        $stmt->bindParam(':fin', $fin);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Obtener lista de pacientes programados para un día
+     */
+    public function obtenerPacientesPorDia($fecha)
+    {
+        $query = "SELECT p.nombre, p.apellido_paterno, p.numero_expediente, v.tipo_visita, v.estatus
+                  FROM " . $this->table_name . " v
+                  JOIN pacientes p ON v.id_paciente = p.id_paciente
+                  WHERE DATE(v.fecha_visita) = :fecha AND v.estatus != 'Cancelada'
+                  ORDER BY v.fecha_visita ASC";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':fecha', $fecha);
         $stmt->execute();
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);

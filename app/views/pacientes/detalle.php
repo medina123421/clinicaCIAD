@@ -91,9 +91,6 @@ include '../../includes/header.php';
         <a href="editar.php?id=<?= $id_paciente ?>" class="btn btn-warning">
             <i class="bi bi-pencil"></i> Editar
         </a>
-        <a href="<?= PROJECT_PATH ?>/app/views/visitas/nueva.php?paciente=<?= $id_paciente ?>" class="btn btn-success">
-            <i class="bi bi-calendar-plus"></i> Nueva Visita
-        </a>
     </div>
 </div>
 

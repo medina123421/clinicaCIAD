@@ -51,10 +51,10 @@ try {
     // Últimos pacientes registrados
     $query = "SELECT id_paciente, numero_expediente, 
               CONCAT(nombre, ' ', apellido_paterno, ' ', IFNULL(apellido_materno, '')) as nombre_completo,
-              edad, sexo, fecha_registro
+              edad, sexo, created_at
               FROM pacientes 
               WHERE activo = 1
-              ORDER BY fecha_registro DESC 
+              ORDER BY created_at DESC 
               LIMIT 5";
     $stmt = $db->query($query);
     $ultimos_pacientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -69,74 +69,26 @@ try {
 include 'app/includes/header.php';
 ?>
 
-<div class="row">
-    <div class="col-12">
-        <h2 class="mb-4">
-            <i class="bi bi-speedometer2"></i> Dashboard
-        </h2>
-    </div>
-</div>
-
 <div class="row g-4 mb-4">
-    <div class="col-md-3">
-        <div class="card stat-card">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <p class="stat-label mb-1">Total Pacientes</p>
-                        <h3 class="stat-number mb-0">
-                            <?= number_format($total_pacientes) ?>
-                        </h3>
-                    </div>
-                    <i class="bi bi-people-fill stat-icon text-primary"></i>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <div class="card stat-card success">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <p class="stat-label mb-1">Visitas Este Mes</p>
-                        <h3 class="stat-number mb-0">
-                            <?= number_format($visitas_mes) ?>
-                        </h3>
-                    </div>
-                    <i class="bi bi-calendar-check stat-icon text-success"></i>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <div class="card stat-card danger">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <p class="stat-label mb-1">Control Inadecuado</p>
-                        <h3 class="stat-number mb-0">
-                            <?= number_format($pacientes_descontrolados) ?>
-                        </h3>
-                    </div>
-                    <i class="bi bi-exclamation-triangle-fill stat-icon text-danger"></i>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <div class="card stat-card warning">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <p class="stat-label mb-1">Próximas Citas</p>
-                        <h3 class="stat-number mb-0">
-                            <?= number_format($proximas_citas) ?>
-                        </h3>
-                    </div>
-                    <i class="bi bi-clock-fill stat-icon text-warning"></i>
+    <!-- Welcome Card -->
+    <div class="col-lg-12">
+        <div class="welcome-card">
+            <div class="welcome-content" style="max-width: 100%;">
+                <p class="text-uppercase small fw-bold text-muted mb-2">Resumen General</p>
+                <h1 class="display-5">Panel de <span class="text-primary-blue">Control</span></h1>
+                <p class="lead">Bienvenido de nuevo, Dr. <?= htmlspecialchars($usuario_nombre ?? 'InvestLab') ?>. Aquí
+                    tienes un vistazo rápido de lo que está sucediendo en tu clínica hoy.</p>
+                <div class="d-flex gap-3">
+                    <a href="<?= PROJECT_PATH ?>/app/views/visitas/nueva.php" class="btn btn-modern btn-modern-primary">
+                        <i class="bi bi-calendar-plus me-2"></i> Agendar Visita
+                    </a>
+                    <a href="<?= PROJECT_PATH ?>/app/views/pacientes/nuevo.php" class="btn btn-modern btn-success">
+                        <i class="bi bi-person-plus me-2"></i> Registrar Paciente
+                    </a>
+                    <a href="<?= PROJECT_PATH ?>/app/views/analisis/registro_completo.php"
+                        class="btn btn-modern btn-light border">
+                        <i class="bi bi-clipboard2-pulse me-2"></i> Registrar Análisis
+                    </a>
                 </div>
             </div>
         </div>
@@ -144,96 +96,125 @@ include 'app/includes/header.php';
 </div>
 
 <div class="row g-4">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <i class="bi bi-person-plus-fill"></i> Últimos Pacientes Registrados
+    <!-- Recent Patients Table Section -->
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm p-4 h-100" style="border-radius: var(--border-radius);">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="mb-0 fw-bold">Últimos Pacientes Registrados</h5>
+                <a href="<?= PROJECT_PATH ?>/app/views/pacientes/lista.php" class="text-decoration-none small">Ver lista
+                    completa</a>
             </div>
-            <div class="card-body">
-                <?php if (count($ultimos_pacientes) > 0): ?>
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Expediente</th>
-                                    <th>Nombre</th>
-                                    <th>Edad</th>
-                                    <th>Sexo</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($ultimos_pacientes as $paciente): ?>
-                                    <tr class="cursor-pointer"
-                                        onclick="window.location.href='<?= PROJECT_PATH ?>/app/views/pacientes/detalle.php?id=<?= $paciente['id_paciente'] ?>'">
-                                        <td>
-                                            <?= htmlspecialchars($paciente['numero_expediente']) ?>
-                                        </td>
-                                        <td>
-                                            <?= htmlspecialchars($paciente['nombre_completo']) ?>
-                                        </td>
-                                        <td>
-                                            <?= $paciente['edad'] ?> años
-                                        </td>
-                                        <td>
-                                            <?= $paciente['sexo'] === 'M' ? 'Masculino' : 'Femenino' ?>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="text-center mt-3">
-                        <a href="<?= PROJECT_PATH ?>/app/views/pacientes/lista.php" class="btn btn-primary btn-sm">
-                            <i class="bi bi-list-ul"></i> Ver Todos los Pacientes
-                        </a>
-                    </div>
-                <?php else: ?>
-                    <p class="text-muted text-center mb-0">No hay pacientes registrados aún.</p>
-                <?php endif; ?>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="text-muted small text-uppercase">
+                        <tr>
+                            <th class="border-0 bg-transparent">Paciente</th>
+                            <th class="border-0 bg-transparent">Expediente</th>
+                            <th class="border-0 bg-transparent text-end">Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($ultimos_pacientes as $paciente): ?>
+                            <tr>
+                                <td class="border-0">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="avatar-sm bg-light-primary rounded-circle d-flex align-items-center justify-content-center"
+                                            style="width:32px; height:32px;">
+                                            <i class="bi bi-person text-primary"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold"><?= htmlspecialchars($paciente['nombre_completo']) ?></div>
+                                            <div class="small text-muted">
+                                                <?= $paciente['sexo'] == 'M' ? 'Hombre' : 'Mujer' ?>,
+                                                <?= $paciente['edad'] ?> años</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="border-0">
+                                    <span
+                                        class="badge bg-light text-dark fw-normal"><?= htmlspecialchars($paciente['numero_expediente']) ?></span>
+                                </td>
+                                <td class="border-0 text-end">
+                                    <a href="<?= PROJECT_PATH ?>/app/views/pacientes/detalle.php?id=<?= $paciente['id_paciente'] ?>"
+                                        class="btn btn-sm btn-light">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                        <?php if (empty($ultimos_pacientes)): ?>
+                            <tr>
+                                <td colspan="3" class="text-center py-4 text-muted">No hay pacientes recientes.</td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <i class="bi bi-lightning-fill"></i> Accesos Rápidos
+    <!-- Situation Sidebar Card -->
+    <div class="col-lg-4">
+        <div class="stat-group-card shadow-sm p-4 h-100"
+            style="border-radius: var(--border-radius); background: white;">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="mb-0 fw-bold">Situación Clínica</h5>
+                <i class="bi bi-activity text-muted"></i>
             </div>
-            <div class="card-body">
-                <div class="d-grid gap-2">
-                    <a href="<?= PROJECT_PATH ?>/app/views/pacientes/nuevo.php" class="btn btn-primary">
-                        <i class="bi bi-person-plus"></i> Registrar Nuevo Paciente
-                    </a>
-                    <a href="<?= PROJECT_PATH ?>/app/views/visitas/nueva.php" class="btn btn-success">
-                        <i class="bi bi-calendar-plus"></i> Registrar Nueva Visita
-                    </a>
-                    <a href="<?= PROJECT_PATH ?>/app/views/analisis/glucosa.php" class="btn btn-info text-white">
-                        <i class="bi bi-clipboard2-pulse"></i> Registrar Análisis de Glucosa
-                    </a>
-                    <a href="<?= PROJECT_PATH ?>/app/views/reportes/index.php" class="btn btn-warning">
-                        <i class="bi bi-file-earmark-pdf"></i> Generar Reportes
-                    </a>
-                </div>
-            </div>
-        </div>
 
-        <div class="card mt-4">
-            <div class="card-header">
-                <i class="bi bi-info-circle-fill"></i> Información del Sistema
+            <div class="stat-item">
+                <div class="stat-info">
+                    <div class="stat-icon-wrapper stat-icon-blue">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                    <div>
+                        <div class="small text-muted">Total Pacientes</div>
+                    </div>
+                </div>
+                <div class="stat-value text-primary"><?= number_format($total_pacientes) ?></div>
             </div>
-            <div class="card-body">
-                <p class="mb-2">
-                    <strong>Usuario:</strong>
-                    <?= htmlspecialchars($usuario_nombre ?? 'No identificado') ?>
-                </p>
-                <p class="mb-2">
-                    <strong>Rol:</strong>
-                    <?= htmlspecialchars($usuario_rol ?? 'Sin rol') ?>
-                </p>
-                <p class="mb-0">
-                    <strong>Último acceso:</strong>
-                    <?= date('d/m/Y H:i') ?>
-                </p>
+
+            <div class="stat-item">
+                <div class="stat-info">
+                    <div class="stat-icon-wrapper stat-icon-green">
+                        <i class="bi bi-calendar-check"></i>
+                    </div>
+                    <div>
+                        <div class="small text-muted">Visitas del Mes</div>
+                    </div>
+                </div>
+                <div class="stat-value text-success"><?= number_format($visitas_mes) ?></div>
+            </div>
+
+            <div class="stat-item">
+                <div class="stat-info">
+                    <div class="stat-icon-wrapper stat-icon-red">
+                        <i class="bi bi-exclamation-triangle"></i>
+                    </div>
+                    <div>
+                        <div class="small text-muted">Control Inadecuado</div>
+                    </div>
+                </div>
+                <div class="stat-value text-danger"><?= number_format($pacientes_descontrolados) ?></div>
+            </div>
+
+            <div class="stat-item">
+                <div class="stat-info">
+                    <div class="stat-icon-wrapper bg-light text-warning">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                    <div>
+                        <div class="small text-muted">Próximas Citas</div>
+                    </div>
+                </div>
+                <div class="stat-value text-dark"><?= number_format($proximas_citas) ?></div>
+            </div>
+
+            <div class="mt-auto pt-4">
+                <a href="<?= PROJECT_PATH ?>/app/views/reportes/index.php"
+                    class="btn btn-modern btn-light border w-100">
+                    <i class="bi bi-file-earmark-pdf me-2"></i> Generar Reportes
+                </a>
             </div>
         </div>
     </div>

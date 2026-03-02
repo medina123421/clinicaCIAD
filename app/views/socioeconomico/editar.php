@@ -780,6 +780,37 @@ include '../../includes/header.php';
                     </div>
 
                     <div class="mb-4">
+                        <label class="form-label fw-bold">Estado Emocional del Paciente</label>
+                        <div class="emotion-selector-box p-3 border rounded bg-light">
+                            <div class="d-flex justify-content-around flex-wrap gap-2">
+                                <?php
+                                $emociones = [
+                                    'Feliz' => ['icon' => 'emoji-laughing', 'color' => 'success'],
+                                    'Triste' => ['icon' => 'emoji-frown', 'color' => 'primary'],
+                                    'Enojado' => ['icon' => 'emoji-angry', 'color' => 'danger'],
+                                    'Ansioso' => ['icon' => 'emoji-expressionless', 'color' => 'warning'],
+                                    'Neutral' => ['icon' => 'emoji-smile', 'color' => 'secondary']
+                                ];
+                                $actual_emocion = $estudio['estado_emocional'] ?? '';
+                                foreach ($emociones as $label => $info):
+                                    $checked = ($actual_emocion == $label) ? 'checked' : '';
+                                    ?>
+                                    <div class="emotion-option text-center">
+                                        <input type="radio" class="btn-check" name="estado_emocional"
+                                            id="emotion_<?= $label ?>" value="<?= $label ?>" <?= $checked ?>>
+                                        <label
+                                            class="btn btn-outline-<?= $info['color'] ?> d-flex flex-column align-items-center p-3"
+                                            for="emotion_<?= $label ?>" style="min-width: 100px;">
+                                            <i class="bi bi-<?= $info['icon'] ?> fs-2 mb-2"></i>
+                                            <span><?= $label ?></span>
+                                        </label>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
                         <label class="form-label">Plan de Intervención / Recomendaciones</label>
                         <textarea class="form-control" name="plan_intervencion"
                             rows="3"><?= htmlspecialchars($estudio['plan_intervencion'] ?? '') ?></textarea>
