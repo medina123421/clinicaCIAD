@@ -129,7 +129,8 @@ class EstudioSocioeconomico
                 'nivel_socioeconomico' => $datos['nivel_socioeconomico'] ?? null,
                 'plan_intervencion' => $datos['plan_intervencion'] ?? null,
                 'nombre_entrevistado' => $datos['nombre_entrevistado'] ?? null,
-                'nombre_trabajador_social' => $datos['nombre_trabajador_social'] ?? null
+                'nombre_trabajador_social' => $datos['nombre_trabajador_social'] ?? null,
+                'estado_emocional' => $datos['estado_emocional'] ?? null
             ];
 
             if ($existing) {

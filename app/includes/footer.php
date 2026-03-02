@@ -1,4 +1,6 @@
 </div> <!-- Fin container-fluid -->
+</main>
+</div> <!-- Fin dashboard-wrapper -->
 
 <!-- Footer -->
 <footer class="bg-light text-center text-muted py-3 mt-5">
