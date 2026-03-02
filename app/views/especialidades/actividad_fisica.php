@@ -392,8 +392,11 @@ include __DIR__ . '/../../includes/header.php';
                                     <input type="number" step="0.1" name="sts_5rep_seg" id="sts_5rep_seg" class="form-control" value="<?= htmlspecialchars($datos['sts_5rep_seg'] ?? '') ?>">
                                 </div>
                                 <div class="col-md-4">
-                                    <div class="pt-4">
-                                        <span id="stsAlertaMsg" class="badge bg-warning text-dark" style="display:none;">Alerta: &gt; 15 seg</span>
+                                    <div class="pt-3">
+                                        <small class="text-muted d-block mb-1">
+                                            <strong>Referencia:</strong> &lt; 12 s = Bueno, 12–15 s = Zona de atención, &gt; 15 s = Alerta.
+                                        </small>
+                                        <span id="stsAlertaMsg" class="badge" style="display:none;"></span>
                                     </div>
                                 </div>
                             </div>
@@ -486,12 +489,32 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     var stsInput = document.getElementById('sts_5rep_seg');
-    if (stsInput) {
-        stsInput.addEventListener('input', function() {
-            var v = parseFloat(this.value);
-            document.getElementById('stsAlertaMsg').style.display = (v > 15) ? 'inline' : 'none';
-        });
-        if (parseFloat(stsInput.value) > 15) document.getElementById('stsAlertaMsg').style.display = 'inline';
+    var stsBadge = document.getElementById('stsAlertaMsg');
+    if (stsInput && stsBadge) {
+        function actualizarSTS() {
+            var v = parseFloat(stsInput.value);
+            if (isNaN(v)) {
+                stsBadge.style.display = 'none';
+                return;
+            }
+            var texto = '';
+            var clase = 'badge ';
+            if (v < 12) {
+                texto = 'Bueno (< 12 s)';
+                clase += 'bg-success';
+            } else if (v <= 15) {
+                texto = 'Zona de atención (12–15 s)';
+                clase += 'bg-warning text-dark';
+            } else {
+                texto = 'Alerta: pérdida de fuerza (> 15 s)';
+                clase += 'bg-danger';
+            }
+            stsBadge.textContent = texto;
+            stsBadge.className = clase;
+            stsBadge.style.display = 'inline';
+        }
+        stsInput.addEventListener('input', actualizarSTS);
+        actualizarSTS();
     }
 
     var patientSearchInput = document.getElementById('patientSearchInput');

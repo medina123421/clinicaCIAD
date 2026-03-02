@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS cuidado_pies (
     dolor_actividad TINYINT(1) DEFAULT 0 COMMENT 'Dolor en pierna/pie con actividad',
     dolor_reposo TINYINT(1) DEFAULT 0 COMMENT 'Dolor en pierna/pie en reposo',
     perdida_sensacion TINYINT(1) DEFAULT 0 COMMENT 'Pérdida de sensación en extremidades inferiores',
+    cambios_color TINYINT(1) DEFAULT 0 COMMENT 'Cambios de color en la piel de piernas o pies',
     
     -- Hábitos y Seguimiento
     fuma TINYINT(1) DEFAULT 0 COMMENT 'Fuma actualmente',

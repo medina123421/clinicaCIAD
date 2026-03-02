@@ -349,6 +349,7 @@ include __DIR__ . '/../../includes/header.php';
                                     <?= renderCheckbox('dolor_actividad', 'Dolor en pierna/pie con actividad', $datos) ?>
                                     <?= renderCheckbox('dolor_reposo', 'Dolor en pierna/pie en reposo', $datos) ?>
                                     <?= renderCheckbox('perdida_sensacion', 'Pérdida de sensación en extremidades inferiores', $datos) ?>
+                                    <?= renderCheckbox('cambios_color', 'Cambios de color en la piel de piernas o pies', $datos) ?>
                                 </div>
                             </div>
                         </div>

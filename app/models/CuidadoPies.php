@@ -123,7 +123,7 @@ class CuidadoPies
             'id_visita',
             // Interrogatorio
             'ulcera_previa', 'amputacion_previa', 'cirugia_previa', 'herida_lenta',
-            'ardor_hormigueo', 'dolor_actividad', 'dolor_reposo', 'perdida_sensacion',
+            'ardor_hormigueo', 'dolor_actividad', 'dolor_reposo', 'perdida_sensacion', 'cambios_color',
             'fuma', 'cigarrillos_dia', 'revision_pies_previa',
             // Dermatológico
             'hiper_plantar_der', 'hiper_plantar_izq', 'hiper_dorsal_der', 'hiper_dorsal_izq', 'hiper_talar_der', 'hiper_talar_izq',
@@ -223,7 +223,7 @@ class CuidadoPies
     {
         return [
             'ulcera_previa', 'amputacion_previa', 'cirugia_previa', 'herida_lenta',
-            'ardor_hormigueo', 'dolor_actividad', 'dolor_reposo', 'perdida_sensacion',
+            'ardor_hormigueo', 'dolor_actividad', 'dolor_reposo', 'perdida_sensacion', 'cambios_color',
             'fuma', 'revision_pies_previa', 'varices', 'educacion_cuidado_pies'
         ];
     }
