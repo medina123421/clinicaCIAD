@@ -66,16 +66,6 @@ include '../../includes/header.php';
     </div>
 </div>
 
-<!-- Búsqueda en Tabla -->
-<div class="row mb-3">
-    <div class="col-md-4">
-        <div class="search-box">
-            <i class="bi bi-search"></i>
-            <input type="text" class="form-control" id="reporteSearchInput"
-                placeholder="Filtrar resultados por paciente o expediente...">
-        </div>
-    </div>
-</div>
 
 <!-- Tabla de Resultados -->
 <div class="table-responsive">
@@ -137,11 +127,6 @@ include '../../includes/header.php';
                                 <a href="imprimir.php?id=<?= $fila['id_visita'] ?>" target="_blank"
                                     class="btn btn-sm btn-outline-dark" title="Imprimir Reporte">
                                     <i class="bi bi-printer-fill"></i>
-                                </a>
-                                <!-- Botón Ver Detalle -->
-                                <a href="<?= PROJECT_PATH ?>/app/views/pacientes/detalle.php?id=<?= $fila['id_visita'] ?>&tab=historial"
-                                    class="btn btn-sm btn-outline-info" title="Ver Paciente">
-                                    <i class="bi bi-eye"></i>
                                 </a>
                             </div>
                         </td>

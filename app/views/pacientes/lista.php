@@ -47,16 +47,6 @@ include '../../includes/header.php';
     </div>
 </div>
 
-<!-- Búsqueda -->
-<div class="row mb-4">
-    <div class="col-md-6">
-        <div class="search-box">
-            <i class="bi bi-search"></i>
-            <input type="text" class="form-control" id="searchInput"
-                placeholder="Buscar por expediente, nombre o email...">
-        </div>
-    </div>
-</div>
 
 <!-- Tabla de pacientes -->
 <div class="card">
