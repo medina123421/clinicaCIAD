@@ -47,16 +47,6 @@ include '../../includes/header.php';
     </div>
 </div>
 
-<!-- Búsqueda -->
-<div class="row mb-4">
-    <div class="col-md-6">
-        <div class="search-box">
-            <i class="bi bi-search"></i>
-            <input type="text" class="form-control" id="searchInput"
-                placeholder="Buscar por expediente, nombre o email...">
-        </div>
-    </div>
-</div>
 
 <!-- Tabla de pacientes -->
 <div class="card">
@@ -198,10 +188,28 @@ include '../../includes/header.php';
                 return;
             }
 
-            $('#deletePacienteNombre').text(nombre);
-            $('#confirmDeleteBtn').attr('href', 'eliminar.php?id=' + id);
-            const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
-            deleteModal.show();
+            // Usar SweetAlert2 si está disponible, de lo contrario usar modal de Bootstrap
+            if (window.Swal) {
+                Swal.fire({
+                    title: '¿Está seguro?',
+                    text: `¿Desea eliminar al paciente ${nombre}? Esta acción no se puede deshacer.`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = 'eliminar.php?id=' + id;
+                    }
+                });
+            } else {
+                $('#deletePacienteNombre').text(nombre);
+                $('#confirmDeleteBtn').attr('href', 'eliminar.php?id=' + id);
+                const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+                deleteModal.show();
+            }
         });
     });
 </script>

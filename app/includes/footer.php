@@ -1,4 +1,6 @@
 </div> <!-- Fin container-fluid -->
+</main>
+</div> <!-- Fin dashboard-wrapper -->
 
 <!-- Footer -->
 <footer class="bg-light text-center text-muted py-3 mt-5">
@@ -10,11 +12,8 @@
     </div>
 </footer>
 
-<!-- Footer -->
-<footer class="bg-light text-center text-muted py-3 mt-5">
-
 <!-- Custom JS -->
-<script src="<?= $project_folder ?>/app/assets/js/app.js"></script>
+<script src="<?= PROJECT_PATH ?>/app/assets/js/app.js"></script>
 </body>
 
 </html>
