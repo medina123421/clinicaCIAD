@@ -342,14 +342,15 @@ class Analisis
     public function registrarInsulina($datos)
     {
         $query = "INSERT INTO lab_insulina
-                  (id_visita, fecha_analisis, insulina_basal, observaciones, created_by)
+                  (id_visita, fecha_analisis, insulina_basal, homa_ir, observaciones, created_by)
                   VALUES
-                  (:id_visita, :fecha_analisis, :insulina_basal, :observaciones, :created_by)";
+                  (:id_visita, :fecha_analisis, :insulina_basal, :homa_ir, :observaciones, :created_by)";
 
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':id_visita', $datos['id_visita']);
         $stmt->bindParam(':fecha_analisis', $datos['fecha_analisis']);
         $stmt->bindValue(':insulina_basal', $datos['insulina_basal'] ?? null);
+        $stmt->bindValue(':homa_ir', $datos['homa_ir'] ?? null);
         $stmt->bindParam(':observaciones', $datos['observaciones']);
         $stmt->bindParam(':created_by', $datos['created_by']);
 

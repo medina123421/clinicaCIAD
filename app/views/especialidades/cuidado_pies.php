@@ -48,26 +48,24 @@ if ($id_visita) {
         $paciente = $pacienteModel->obtenerPorId($visita['id_paciente']);
     }
 } else {
-    $query_recent = "SELECT v.*,
-                    CONCAT(p.nombre, ' ', p.apellido_paterno, ' ', IFNULL(p.apellido_materno, '')) as paciente_nombre,
-                    p.numero_expediente
-                    FROM visitas v
-                    JOIN pacientes p ON v.id_paciente = p.id_paciente
-                    ORDER BY v.fecha_visita DESC
-                    LIMIT 10";
-    $stmt_recent = $db->prepare($query_recent);
-    $stmt_recent->execute();
-    $visitas_recientes = $stmt_recent->fetchAll(PDO::FETCH_ASSOC);
+    $query_pacientes = "SELECT p.id_paciente, p.numero_expediente,
+                        CONCAT(p.nombre, ' ', p.apellido_paterno, ' ', IFNULL(p.apellido_materno, '')) as nombre_completo,
+                        (SELECT id_visita FROM visitas WHERE id_paciente = p.id_paciente ORDER BY fecha_visita DESC LIMIT 1) as ultima_visita_id,
+                        (SELECT fecha_visita FROM visitas WHERE id_paciente = p.id_paciente ORDER BY fecha_visita DESC LIMIT 1) as ultima_visita_fecha
+                        FROM pacientes p WHERE p.activo = 1 ORDER BY p.nombre ASC LIMIT 200";
+    $stmt_pac = $db->prepare($query_pacientes);
+    $stmt_pac->execute();
+    $lista_pacientes = $stmt_pac->fetchAll(PDO::FETCH_ASSOC);
 }
 
 $page_title = 'Cuidado de los Pies';
 
 function renderRadio012($name, $label, $datos, $side = '')
 {
-    $v = (int)($datos[$name] ?? -1);
+    $v = (int) ($datos[$name] ?? -1);
     $html = "<div class='mb-2'><label class='form-label small fw-bold'>$label $side</label><div class='d-flex gap-2'>";
     foreach (['0' => '0', '1' => '1', '2' => '2'] as $val => $lab) {
-        $ch = $v === (int)$val ? 'checked' : '';
+        $ch = $v === (int) $val ? 'checked' : '';
         $color = $val == '0' ? 'success' : ($val == '1' ? 'warning' : 'danger');
         $html .= "<div class='form-check'><input type='radio' name='$name' value='$val' id='{$name}_{$val}' class='form-check-input text-$color riesgo-item' $ch><label class='form-check-label small' for='{$name}_{$val}'>$lab</label></div>";
     }
@@ -93,12 +91,17 @@ include __DIR__ . '/../../includes/header.php';
         --pies-warning: #ffc107;
         --pies-success: #198754;
     }
-    body { background-color: #f5f7fb; }
+
+    body {
+        background-color: #f5f7fb;
+    }
+
     .card {
         border-radius: 12px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         margin-bottom: 1.5rem;
     }
+
     .card-header {
         background-color: var(--pies-primary);
         color: white;
@@ -106,6 +109,7 @@ include __DIR__ . '/../../includes/header.php';
         font-weight: 600;
         padding: 1rem 1.25rem;
     }
+
     .section-title {
         color: var(--pies-primary);
         border-bottom: 2px solid var(--pies-light);
@@ -115,7 +119,11 @@ include __DIR__ . '/../../includes/header.php';
         display: flex;
         align-items: center;
     }
-    .section-title i { margin-right: 0.5rem; }
+
+    .section-title i {
+        margin-right: 0.5rem;
+    }
+
     .nav-tabs .nav-link {
         color: #666;
         font-weight: 600;
@@ -123,11 +131,13 @@ include __DIR__ . '/../../includes/header.php';
         padding: 1rem 1.5rem;
         border-bottom: 3px solid transparent;
     }
+
     .nav-tabs .nav-link.active {
         color: var(--pies-primary);
         background: transparent;
         border-bottom-color: var(--pies-primary);
     }
+
     .pie-map {
         background: var(--pies-light);
         border: 2px solid var(--pies-border);
@@ -137,6 +147,7 @@ include __DIR__ . '/../../includes/header.php';
         min-height: 200px;
         position: relative;
     }
+
     .riesgo-box {
         background: var(--pies-light);
         border: 1px solid var(--pies-border);
@@ -145,8 +156,19 @@ include __DIR__ . '/../../includes/header.php';
         font-weight: 600;
         margin-bottom: 1rem;
     }
-    .riesgo-box.moderado { background: #fff3cd; border-color: #ffeaa7; color: #856404; }
-    .riesgo-box.alto { background: #f8d7da; border-color: #f5c6cb; color: #721c24; }
+
+    .riesgo-box.moderado {
+        background: #fff3cd;
+        border-color: #ffeaa7;
+        color: #856404;
+    }
+
+    .riesgo-box.alto {
+        background: #f8d7da;
+        border-color: #f5c6cb;
+        color: #721c24;
+    }
+
     .alerta-roja {
         background: var(--pies-danger);
         color: white;
@@ -157,18 +179,21 @@ include __DIR__ . '/../../includes/header.php';
         margin-bottom: 1rem;
         display: none;
     }
+
     .bilateral-section {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 1rem;
         margin-bottom: 1rem;
     }
+
     .pie-side {
         background: #f8f9fa;
         border: 1px solid #dee2e6;
         border-radius: 8px;
         padding: 1rem;
     }
+
     .pie-side h6 {
         color: var(--pies-primary);
         border-bottom: 1px solid var(--pies-border);
@@ -184,23 +209,22 @@ include __DIR__ . '/../../includes/header.php';
             <?php if ($paciente): ?>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="../pacientes/detalle_paciente.php?id=<?= (int)$paciente['id_paciente'] ?>"><?= htmlspecialchars($paciente['nombre'] . ' ' . $paciente['apellido_paterno']) ?></a></li>
-                        <li class="breadcrumb-item active">Evaluación Podológica</li>
+                        <li class="breadcrumb-item"><a
+                                href="<?= PROJECT_PATH ?>/app/views/pacientes/detalle.php?id=<?= (int) $paciente['id_paciente'] ?>"><?= htmlspecialchars($paciente['nombre'] . ' ' . $paciente['apellido_paterno']) ?></a>
+                        </li>
+                        <li class="breadcrumb-item active">Cuidado de los Pies</li>
                     </ol>
                 </nav>
             <?php else: ?>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="../../index.php">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="<?= PROJECT_PATH ?>/index.php">Dashboard</a></li>
                         <li class="breadcrumb-item active">Selección de Paciente</li>
                     </ol>
                 </nav>
             <?php endif; ?>
         </div>
-        <div class="btn-group">
-            <a href="../../index.php" class="btn btn-light shadow-sm"><i class="bi bi-house"></i> Home</a>
-            <a href="../visitas/lista.php" class="btn btn-info shadow-sm"><i class="bi bi-clipboard-data"></i> Visitas</a>
-        </div>
+        <a href="<?= PROJECT_PATH ?>/index.php" class="btn btn-light shadow-sm"><i class="bi bi-house"></i> Home</a>
     </div>
 
     <?php if ($message): ?>
@@ -212,81 +236,60 @@ include __DIR__ . '/../../includes/header.php';
     <?php endif; ?>
 
     <?php if (!$id_visita): ?>
-        <div class="row">
-            <div class="col-md-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
                 <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-header bg-info text-white">
-                        <i class="bi bi-search"></i> Buscar Paciente
+                    <div class="card-header bg-info text-white d-flex align-items-center">
+                        <i class="bi bi-person-plus-fill me-2 fs-5"></i>
+                        <span>Seleccionar Paciente &mdash; Cuidado de los Pies</span>
                     </div>
-                    <div class="card-body">
-                        <p class="text-muted small">Busque al paciente para abrir la evaluación podológica.</p>
-                        <div class="mb-3">
-                            <input type="text" class="form-control" id="patientSearchInput" placeholder="Nombre o expediente...">
+                    <div class="card-body p-4">
+                        <p class="text-muted mb-4">Busque y seleccione al paciente para realizar su evaluaci&oacute;n
+                            podol&oacute;gica.</p>
+                        <div class="input-group mb-4">
+                            <span class="input-group-text bg-white border-end-0"><i
+                                    class="bi bi-search text-muted"></i></span>
+                            <input type="text" class="form-control border-start-0 border-info border-opacity-25"
+                                id="patientSelectionInput" placeholder="Buscar por nombre o n&uacute;mero de expediente...">
                         </div>
-                        <div id="patientSearchResults" class="list-group list-group-flush" style="max-height: 300px; overflow-y: auto;">
-                            <div class="text-center py-3 text-muted">
-                                <i class="bi bi-person-fill-gear fs-2 d-block mb-2"></i>
-                                <small>Escriba para buscar</small>
-                            </div>
+                        <div id="patientSearchResults" class="list-group list-group-flush shadow-sm rounded-3 border"
+                            style="max-height: 420px; overflow-y: auto;">
+                            <?php foreach ($lista_pacientes as $p):
+                                $searchText = strtolower($p['nombre_completo'] . ' ' . $p['numero_expediente']);
+                                ?>
+                                <div class="list-group-item list-group-item-action p-3 border-bottom patient-item"
+                                    data-search="<?= htmlspecialchars($searchText) ?>">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1 fw-bold"><?= htmlspecialchars($p['nombre_completo']) ?></h6>
+                                            <small class="text-muted"><?= htmlspecialchars($p['numero_expediente']) ?></small>
+                                        </div>
+                                        <?php if ($p['ultima_visita_id']): ?>
+                                            <a href="cuidado_pies.php?id_visita=<?= $p['ultima_visita_id'] ?>"
+                                                class="btn btn-sm btn-outline-info rounded-pill">
+                                                <i class="bi bi-bandaid"></i> Abrir &Uacute;ltima
+                                                (<?= date('d/m/y', strtotime($p['ultima_visita_fecha'])) ?>)
+                                            </a>
+                                        <?php else: ?>
+                                            <span class="badge bg-light text-muted border">Sin visitas</span>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
                         </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-7">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-dark text-white">
-                        <i class="bi bi-clock-history"></i> Visitas Recientes
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="table table-hover mb-0 align-middle">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Fecha</th>
-                                        <th>Paciente</th>
-                                        <th>Acción</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php if (!empty($visitas_recientes)): ?>
-                                        <?php foreach ($visitas_recientes as $v): ?>
-                                            <tr>
-                                                <td>
-                                                    <div class="fw-bold"><?= date('d/m/Y', strtotime($v['fecha_visita'])) ?></div>
-                                                    <small class="text-muted"><?= date('H:i', strtotime($v['fecha_visita'])) ?></small>
-                                                </td>
-                                                <td>
-                                                    <div><?= htmlspecialchars($v['paciente_nombre']) ?></div>
-                                                    <small class="badge bg-light text-dark border"><?= htmlspecialchars($v['numero_expediente']) ?></small>
-                                                </td>
-                                                <td>
-                                                    <a href="?id_visita=<?= (int)$v['id_visita'] ?>" class="btn btn-info btn-sm rounded-pill">Abrir Consulta <i class="bi bi-arrow-right-short"></i></a>
-                                                </td>
-                                            </tr>
-                                        <?php endforeach; ?>
-                                    <?php else: ?>
-                                        <tr>
-                                            <td colspan="3" class="text-center py-4 text-muted">No hay visitas recientes</td>
-                                        </tr>
-                                    <?php endif; ?>
-                                </tbody>
-                            </table>
+                        <div class="mt-3 text-center">
+                            <small class="text-muted">&iquest;Paciente sin visita? <a
+                                    href="<?= PROJECT_PATH ?>/app/views/visitas/nueva.php" class="text-info">Registrar nueva
+                                    visita</a></small>
                         </div>
                     </div>
-                    <div class="card-footer bg-white text-center">
-                        <a href="../visitas/lista.php" class="btn btn-link btn-sm text-decoration-none">Ver todas las visitas</a>
-                    </div>
-                </div>
-                <div class="alert alert-info mt-4 border-0 shadow-sm">
-                    <i class="bi bi-info-circle-fill me-2"></i>
-                    Si el paciente no tiene visita registrada, <a href="../visitas/nueva.php" class="alert-link">registre una nueva visita</a> primero.
                 </div>
             </div>
         </div>
     <?php else: ?>
 
         <form method="POST" id="formCuidadoPies">
-            <input type="hidden" name="id_visita" value="<?= (int)$id_visita ?>">
+            <input type="hidden" name="id_visita" value="<?= (int) $id_visita ?>">
             <input type="hidden" name="save_consulta" value="1">
 
             <!-- Alerta Roja -->
@@ -299,33 +302,41 @@ include __DIR__ . '/../../includes/header.php';
             <div class="row mb-4">
                 <div class="col-md-6">
                     <div class="riesgo-box" id="riesgoBoxDer">
-                        Pie Derecho - Puntuación: <span id="puntajeDer"><?= (int)($datos['puntuacion_total_der'] ?? 0) ?></span> | 
+                        Pie Derecho - Puntuación: <span
+                            id="puntajeDer"><?= (int) ($datos['puntuacion_total_der'] ?? 0) ?></span> |
                         Riesgo: <span id="riesgoDer"><?= htmlspecialchars($datos['riesgo_der'] ?? 'Leve') ?></span>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="riesgo-box" id="riesgoBoxIzq">
-                        Pie Izquierdo - Puntuación: <span id="puntajeIzq"><?= (int)($datos['puntuacion_total_izq'] ?? 0) ?></span> | 
+                        Pie Izquierdo - Puntuación: <span
+                            id="puntajeIzq"><?= (int) ($datos['puntuacion_total_izq'] ?? 0) ?></span> |
                         Riesgo: <span id="riesgoIzq"><?= htmlspecialchars($datos['riesgo_izq'] ?? 'Leve') ?></span>
                     </div>
                 </div>
             </div>
 
-            <ul class="nav nav-tabs mb-4 px-2 bg-white rounded shadow-sm sticky-top" style="top: 10px; z-index: 100;" id="piesTabs" role="tablist">
+            <ul class="nav nav-tabs mb-4 px-2 bg-white rounded shadow-sm sticky-top" style="top: 10px; z-index: 100;"
+                id="piesTabs" role="tablist">
                 <li class="nav-item">
-                    <button class="nav-link active" id="tab-interrog" data-bs-toggle="tab" data-bs-target="#pane-interrog" type="button">1. Interrogatorio</button>
+                    <button class="nav-link active" id="tab-interrog" data-bs-toggle="tab" data-bs-target="#pane-interrog"
+                        type="button">1. Interrogatorio</button>
                 </li>
                 <li class="nav-item">
-                    <button class="nav-link" id="tab-dermato" data-bs-toggle="tab" data-bs-target="#pane-dermato" type="button">2. Examen Dermatológico</button>
+                    <button class="nav-link" id="tab-dermato" data-bs-toggle="tab" data-bs-target="#pane-dermato"
+                        type="button">2. Examen Dermatológico</button>
                 </li>
                 <li class="nav-item">
-                    <button class="nav-link" id="tab-estructura" data-bs-toggle="tab" data-bs-target="#pane-estructura" type="button">3. Estructura Ósea</button>
+                    <button class="nav-link" id="tab-estructura" data-bs-toggle="tab" data-bs-target="#pane-estructura"
+                        type="button">3. Estructura Ósea</button>
                 </li>
                 <li class="nav-item">
-                    <button class="nav-link" id="tab-neuro" data-bs-toggle="tab" data-bs-target="#pane-neuro" type="button">4. Vascular y Neurológico</button>
+                    <button class="nav-link" id="tab-neuro" data-bs-toggle="tab" data-bs-target="#pane-neuro"
+                        type="button">4. Vascular y Neurológico</button>
                 </li>
                 <li class="nav-item">
-                    <button class="nav-link" id="tab-obs" data-bs-toggle="tab" data-bs-target="#pane-obs" type="button">5. Observaciones</button>
+                    <button class="nav-link" id="tab-obs" data-bs-toggle="tab" data-bs-target="#pane-obs" type="button">5.
+                        Observaciones</button>
                 </li>
             </ul>
 
@@ -361,18 +372,23 @@ include __DIR__ . '/../../includes/header.php';
                             <div class="row g-3">
                                 <div class="col-md-4">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" name="fuma" id="fuma" value="1" <?= !empty($datos['fuma']) ? 'checked' : '' ?>>
+                                        <input class="form-check-input" type="checkbox" name="fuma" id="fuma" value="1"
+                                            <?= !empty($datos['fuma']) ? 'checked' : '' ?>>
                                         <label class="form-check-label fw-bold" for="fuma">Fuma actualmente</label>
                                     </div>
                                 </div>
-                                <div class="col-md-4" id="cigarrillosWrap" style="<?= !empty($datos['fuma']) ? '' : 'display:none' ?>">
+                                <div class="col-md-4" id="cigarrillosWrap"
+                                    style="<?= !empty($datos['fuma']) ? '' : 'display:none' ?>">
                                     <label class="form-label fw-bold">Cigarrillos al día</label>
-                                    <input type="number" min="0" name="cigarrillos_dia" class="form-control" value="<?= htmlspecialchars($datos['cigarrillos_dia'] ?? '') ?>">
+                                    <input type="number" min="0" name="cigarrillos_dia" class="form-control"
+                                        value="<?= htmlspecialchars($datos['cigarrillos_dia'] ?? '') ?>">
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" name="revision_pies_previa" id="revision_pies_previa" value="1" <?= !empty($datos['revision_pies_previa']) ? 'checked' : '' ?>>
-                                        <label class="form-check-label fw-bold" for="revision_pies_previa">Han revisado sus pies previamente</label>
+                                        <input class="form-check-input" type="checkbox" name="revision_pies_previa"
+                                            id="revision_pies_previa" value="1" <?= !empty($datos['revision_pies_previa']) ? 'checked' : '' ?>>
+                                        <label class="form-check-label fw-bold" for="revision_pies_previa">Han revisado sus
+                                            pies previamente</label>
                                     </div>
                                 </div>
                             </div>
@@ -472,7 +488,9 @@ include __DIR__ . '/../../includes/header.php';
                             </div>
                             <div class="mt-3">
                                 <label class="form-label fw-bold">Otros hallazgos dermatológicos</label>
-                                <input type="text" name="der_izq_otra_lesion" class="form-control" value="<?= htmlspecialchars($datos['der_izq_otra_lesion'] ?? '') ?>" placeholder="Describir otras lesiones encontradas">
+                                <input type="text" name="der_izq_otra_lesion" class="form-control"
+                                    value="<?= htmlspecialchars($datos['der_izq_otra_lesion'] ?? '') ?>"
+                                    placeholder="Describir otras lesiones encontradas">
                             </div>
                         </div>
                     </div>
@@ -558,11 +576,13 @@ include __DIR__ . '/../../includes/header.php';
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label fw-bold">Llenado capilar derecho (seg)</label>
-                                    <input type="number" step="0.1" name="llenado_capilar_der" class="form-control" value="<?= htmlspecialchars($datos['llenado_capilar_der'] ?? '') ?>">
+                                    <input type="number" step="0.1" name="llenado_capilar_der" class="form-control"
+                                        value="<?= htmlspecialchars($datos['llenado_capilar_der'] ?? '') ?>">
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label fw-bold">Llenado capilar izquierdo (seg)</label>
-                                    <input type="number" step="0.1" name="llenado_capilar_izq" class="form-control" value="<?= htmlspecialchars($datos['llenado_capilar_izq'] ?? '') ?>">
+                                    <input type="number" step="0.1" name="llenado_capilar_izq" class="form-control"
+                                        value="<?= htmlspecialchars($datos['llenado_capilar_izq'] ?? '') ?>">
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label fw-bold">Edema (Signo de Godet)</label>
@@ -576,7 +596,8 @@ include __DIR__ . '/../../includes/header.php';
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" name="varices" id="varices" value="1" <?= !empty($datos['varices']) ? 'checked' : '' ?>>
+                                        <input class="form-check-input" type="checkbox" name="varices" id="varices"
+                                            value="1" <?= !empty($datos['varices']) ? 'checked' : '' ?>>
                                         <label class="form-check-label fw-bold" for="varices">Presencia de várices</label>
                                     </div>
                                 </div>
@@ -590,25 +611,30 @@ include __DIR__ . '/../../includes/header.php';
                             <div class="row g-3">
                                 <div class="col-md-4">
                                     <label class="form-label fw-bold">Monofilamento 10g (puntos positivos 0-10)</label>
-                                    <input type="number" min="0" max="10" name="monofilamento_puntos" class="form-control" value="<?= htmlspecialchars($datos['monofilamento_puntos'] ?? '') ?>">
+                                    <input type="number" min="0" max="10" name="monofilamento_puntos" class="form-control"
+                                        value="<?= htmlspecialchars($datos['monofilamento_puntos'] ?? '') ?>">
                                     <small class="text-muted">Más de 5 puntos = alterado</small>
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label fw-bold">Sensibilidad vibratoria (segundos)</label>
-                                    <input type="number" step="0.1" name="sensibilidad_vibratoria_seg" class="form-control" value="<?= htmlspecialchars($datos['sensibilidad_vibratoria_seg'] ?? '') ?>">
+                                    <input type="number" step="0.1" name="sensibilidad_vibratoria_seg" class="form-control"
+                                        value="<?= htmlspecialchars($datos['sensibilidad_vibratoria_seg'] ?? '') ?>">
                                     <small class="text-muted">Menos de 8 seg = alterado</small>
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label fw-bold">Reflejo rotuliano (0-2)</label>
-                                    <input type="number" min="0" max="2" name="reflejo_rotuliano" class="form-control" value="<?= htmlspecialchars($datos['reflejo_rotuliano'] ?? '') ?>">
+                                    <input type="number" min="0" max="2" name="reflejo_rotuliano" class="form-control"
+                                        value="<?= htmlspecialchars($datos['reflejo_rotuliano'] ?? '') ?>">
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label fw-bold">Dorsiflexión del pie (0-2)</label>
-                                    <input type="number" min="0" max="2" name="dorsiflexion_pie" class="form-control" value="<?= htmlspecialchars($datos['dorsiflexion_pie'] ?? '') ?>">
+                                    <input type="number" min="0" max="2" name="dorsiflexion_pie" class="form-control"
+                                        value="<?= htmlspecialchars($datos['dorsiflexion_pie'] ?? '') ?>">
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label fw-bold">Apertura ortejos en abanico (0-2)</label>
-                                    <input type="number" min="0" max="2" name="apertura_ortejos" class="form-control" value="<?= htmlspecialchars($datos['apertura_ortejos'] ?? '') ?>">
+                                    <input type="number" min="0" max="2" name="apertura_ortejos" class="form-control"
+                                        value="<?= htmlspecialchars($datos['apertura_ortejos'] ?? '') ?>">
                                 </div>
                             </div>
                         </div>
@@ -621,12 +647,15 @@ include __DIR__ . '/../../includes/header.php';
                         <div class="card-body p-4">
                             <h5 class="section-title"><i class="bi bi-mortarboard"></i> Educación</h5>
                             <div class="form-check form-switch mb-3">
-                                <input class="form-check-input" type="checkbox" name="educacion_cuidado_pies" id="educacion_cuidado_pies" value="1" <?= !empty($datos['educacion_cuidado_pies']) ? 'checked' : '' ?>>
-                                <label class="form-check-label fw-bold" for="educacion_cuidado_pies">Se impartió técnica de cuidado de pies y calzado adecuado</label>
+                                <input class="form-check-input" type="checkbox" name="educacion_cuidado_pies"
+                                    id="educacion_cuidado_pies" value="1" <?= !empty($datos['educacion_cuidado_pies']) ? 'checked' : '' ?>>
+                                <label class="form-check-label fw-bold" for="educacion_cuidado_pies">Se impartió técnica de
+                                    cuidado de pies y calzado adecuado</label>
                             </div>
-                            
+
                             <label class="form-label fw-bold">Observaciones del especialista</label>
-                            <textarea name="observaciones_especialista" class="form-control" rows="6" placeholder="Hallazgos adicionales, recomendaciones, plan de seguimiento..."><?= htmlspecialchars($datos['observaciones_especialista'] ?? '') ?></textarea>
+                            <textarea name="observaciones_especialista" class="form-control" rows="6"
+                                placeholder="Hallazgos adicionales, recomendaciones, plan de seguimiento..."><?= htmlspecialchars($datos['observaciones_especialista'] ?? '') ?></textarea>
                         </div>
                     </div>
                 </div>
@@ -643,108 +672,86 @@ include __DIR__ . '/../../includes/header.php';
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Función para calcular riesgo en tiempo real
-    function calcularRiesgo() {
-        let puntajeDer = 0, puntajeIzq = 0;
-        let alertaRoja = false;
+    document.addEventListener('DOMContentLoaded', function () {
+        // Función para calcular riesgo en tiempo real
+        function calcularRiesgo() {
+            let puntajeDer = 0, puntajeIzq = 0;
+            let alertaRoja = false;
 
-        // Sumar todos los campos de riesgo (0-2)
-        document.querySelectorAll('.riesgo-item:checked').forEach(function(radio) {
-            const val = parseInt(radio.value);
-            const name = radio.name;
-            
-            if (name.includes('_der')) {
-                puntajeDer += val;
-            } else if (name.includes('_izq')) {
-                puntajeIzq += val;
-            } else {
-                // Campos neurológicos (se suman a ambos pies)
-                puntajeDer += val;
-                puntajeIzq += val;
-            }
-            
-            // Alerta roja si cualquier campo = 2
-            if (val === 2) alertaRoja = true;
-            
-            // Pie de Charcot o necrosis siempre alerta roja
-            if ((name.includes('pie_charcot') || name.includes('necrosis')) && val > 0) {
-                alertaRoja = true;
-            }
+            // Sumar todos los campos de riesgo (0-2)
+            document.querySelectorAll('.riesgo-item:checked').forEach(function (radio) {
+                const val = parseInt(radio.value);
+                const name = radio.name;
+
+                if (name.includes('_der')) {
+                    puntajeDer += val;
+                } else if (name.includes('_izq')) {
+                    puntajeIzq += val;
+                } else {
+                    // Campos neurológicos (se suman a ambos pies)
+                    puntajeDer += val;
+                    puntajeIzq += val;
+                }
+
+                // Alerta roja si cualquier campo = 2
+                if (val === 2) alertaRoja = true;
+
+                // Pie de Charcot o necrosis siempre alerta roja
+                if ((name.includes('pie_charcot') || name.includes('necrosis')) && val > 0) {
+                    alertaRoja = true;
+                }
+            });
+
+            // Alerta roja por antecedentes
+            if (document.getElementById('amputacion_previa')?.checked) alertaRoja = true;
+
+            // Actualizar display
+            document.getElementById('puntajeDer').textContent = puntajeDer;
+            document.getElementById('puntajeIzq').textContent = puntajeIzq;
+
+            const riesgoDer = puntajeDer <= 10 ? 'Leve' : (puntajeDer <= 25 ? 'Moderado' : 'Alto');
+            const riesgoIzq = puntajeIzq <= 10 ? 'Leve' : (puntajeIzq <= 25 ? 'Moderado' : 'Alto');
+
+            document.getElementById('riesgoDer').textContent = riesgoDer;
+            document.getElementById('riesgoIzq').textContent = riesgoIzq;
+
+            // Actualizar clases de riesgo
+            const boxDer = document.getElementById('riesgoBoxDer');
+            const boxIzq = document.getElementById('riesgoBoxIzq');
+
+            boxDer.className = 'riesgo-box ' + (riesgoDer === 'Alto' ? 'alto' : (riesgoDer === 'Moderado' ? 'moderado' : ''));
+            boxIzq.className = 'riesgo-box ' + (riesgoIzq === 'Alto' ? 'alto' : (riesgoIzq === 'Moderado' ? 'moderado' : ''));
+
+            // Mostrar/ocultar alerta roja
+            document.getElementById('alertaRoja').style.display = alertaRoja ? 'block' : 'none';
+        }
+
+        // Event listeners para cálculo en tiempo real
+        document.querySelectorAll('.riesgo-item').forEach(function (radio) {
+            radio.addEventListener('change', calcularRiesgo);
         });
 
-        // Alerta roja por antecedentes
-        if (document.getElementById('amputacion_previa')?.checked) alertaRoja = true;
+        document.getElementById('amputacion_previa')?.addEventListener('change', calcularRiesgo);
 
-        // Actualizar display
-        document.getElementById('puntajeDer').textContent = puntajeDer;
-        document.getElementById('puntajeIzq').textContent = puntajeIzq;
-        
-        const riesgoDer = puntajeDer <= 10 ? 'Leve' : (puntajeDer <= 25 ? 'Moderado' : 'Alto');
-        const riesgoIzq = puntajeIzq <= 10 ? 'Leve' : (puntajeIzq <= 25 ? 'Moderado' : 'Alto');
-        
-        document.getElementById('riesgoDer').textContent = riesgoDer;
-        document.getElementById('riesgoIzq').textContent = riesgoIzq;
+        // Calcular al cargar
+        calcularRiesgo();
 
-        // Actualizar clases de riesgo
-        const boxDer = document.getElementById('riesgoBoxDer');
-        const boxIzq = document.getElementById('riesgoBoxIzq');
-        
-        boxDer.className = 'riesgo-box ' + (riesgoDer === 'Alto' ? 'alto' : (riesgoDer === 'Moderado' ? 'moderado' : ''));
-        boxIzq.className = 'riesgo-box ' + (riesgoIzq === 'Alto' ? 'alto' : (riesgoIzq === 'Moderado' ? 'moderado' : ''));
+        // Mostrar/ocultar cigarrillos por día
+        document.getElementById('fuma')?.addEventListener('change', function () {
+            document.getElementById('cigarrillosWrap').style.display = this.checked ? 'block' : 'none';
+        });
 
-        // Mostrar/ocultar alerta roja
-        document.getElementById('alertaRoja').style.display = alertaRoja ? 'block' : 'none';
-    }
-
-    // Event listeners para cálculo en tiempo real
-    document.querySelectorAll('.riesgo-item').forEach(function(radio) {
-        radio.addEventListener('change', calcularRiesgo);
+        // Client-side patient search filter
+        var patientSelectionInput = document.getElementById('patientSelectionInput');
+        if (patientSelectionInput) {
+            patientSelectionInput.addEventListener('input', function() {
+                var term = this.value.toLowerCase().trim();
+                document.querySelectorAll('#patientSearchResults .patient-item').forEach(function(el) {
+                    el.style.display = el.dataset.search.includes(term) ? '' : 'none';
+                });
+            });
+        }
     });
-    
-    document.getElementById('amputacion_previa')?.addEventListener('change', calcularRiesgo);
-    
-    // Calcular al cargar
-    calcularRiesgo();
-
-    // Mostrar/ocultar cigarrillos por día
-    document.getElementById('fuma')?.addEventListener('change', function() {
-        document.getElementById('cigarrillosWrap').style.display = this.checked ? 'block' : 'none';
-    });
-
-    // Búsqueda AJAX de pacientes
-    const patientSearchInput = document.getElementById('patientSearchInput');
-    if (patientSearchInput) {
-        const resultsContainer = document.getElementById('patientSearchResults');
-        const debounce = function(fn, ms) {
-            let t;
-            return function() { clearTimeout(t); t = setTimeout(fn, ms); };
-        };
-        
-        patientSearchInput.addEventListener('input', debounce(function() {
-            const search = this.value.trim();
-            if (search.length < 2) {
-                resultsContainer.innerHTML = '<div class="text-center py-3 text-muted"><i class="bi bi-person-fill-gear fs-2 d-block mb-2"></i><small>Escriba para buscar</small></div>';
-                return;
-            }
-            
-            resultsContainer.innerHTML = '<div class="text-center py-3"><div class="spinner-border spinner-border-sm text-info"></div></div>';
-            
-            const xhr = new XMLHttpRequest();
-            xhr.open('GET', '../../ajax/buscar_pacientes_pies.php?search=' + encodeURIComponent(search));
-            xhr.onload = function() {
-                try {
-                    const r = JSON.parse(xhr.responseText);
-                    if (r.success && r.html) resultsContainer.innerHTML = r.html;
-                    else resultsContainer.innerHTML = '<div class="p-4 text-center text-muted">No se encontraron resultados</div>';
-                } catch (e) {
-                    resultsContainer.innerHTML = '<div class="p-4 text-center text-danger">Error al buscar</div>';
-                }
-            };
-            xhr.send();
-        }, 400));
-    }
-});
 </script>
 
 <?php include __DIR__ . '/../../includes/footer.php'; ?>

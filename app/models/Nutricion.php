@@ -160,7 +160,8 @@ class Nutricion
 
                 // Recomendaciones
                 'recomendaciones_generales' => $processed_data['recomendaciones_generales'],
-                'recomendaciones_otros' => $datos['recomendaciones_otros'] ?? null
+                'recomendaciones_otros' => $datos['recomendaciones_otros'] ?? null,
+                'recomendaciones_texto' => $datos['recomendaciones_texto'] ?? null
             ];
 
             if ($existing) {

@@ -84,10 +84,16 @@ include '../../includes/header.php';
         </nav>
     </div>
     <div class="col-md-5 d-flex flex-wrap justify-content-end align-items-start gap-2">
-        <a href="<?= PROJECT_PATH ?>/app/views/socioeconomico/editar.php?id=<?= $id_paciente ?>"
-            class="btn btn-info text-white">
-            <i class="bi bi-file-earmark-person"></i> Estudio Socioeconómico
-        </a>
+        <div class="btn-group">
+            <a href="<?= PROJECT_PATH ?>/app/views/socioeconomico/ver.php?id=<?= $id_paciente ?>"
+                class="btn btn-info text-white">
+                <i class="bi bi-eye"></i> Ver/Imprimir Estudio
+            </a>
+            <a href="<?= PROJECT_PATH ?>/app/views/socioeconomico/editar.php?id=<?= $id_paciente ?>"
+                class="btn btn-info text-white border-start border-white-50">
+                <i class="bi bi-pencil"></i> Registrar Estudio Socioeconomico
+            </a>
+        </div>
         <a href="editar.php?id=<?= $id_paciente ?>" class="btn btn-warning">
             <i class="bi bi-pencil"></i> Editar
         </a>

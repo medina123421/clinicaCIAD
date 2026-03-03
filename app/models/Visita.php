@@ -158,9 +158,6 @@ class Visita
     }
 
     /**
-     * Obtener conteos de visitas por día para un mes específico
-     */
-    /**
      * Obtener conteos de visitas por día para un rango de fechas
      */
     public function obtenerConteosRango($inicio, $fin)
@@ -195,5 +192,31 @@ class Visita
         $stmt->execute();
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Actualizar estatus de una visita
+     */
+    public function actualizarEstatus($id, $estatus)
+    {
+        $query = "UPDATE " . $this->table_name . " SET estatus = :estatus WHERE id_visita = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->bindParam(':estatus', $estatus);
+        return $stmt->execute();
+    }
+
+    /**
+     * Reagendar una visita
+     */
+    public function reagendar($id, $nueva_fecha)
+    {
+        $query = "UPDATE " . $this->table_name . " 
+                  SET fecha_visita = :fecha, estatus = 'Programada' 
+                  WHERE id_visita = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->bindParam(':fecha', $nueva_fecha);
+        return $stmt->execute();
     }
 }

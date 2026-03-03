@@ -36,12 +36,25 @@ include '../../includes/header.php';
     </div>
 <?php endif; ?>
 
-<div class="row mb-4">
-    <div class="col-md-6">
-        <h2><i class="bi bi-people-fill"></i> Pacientes</h2>
+<div class="row align-items-center mb-4">
+    <div class="col-md-5">
+        <h2><i class="bi bi-people-fill text-primary"></i> Pacientes</h2>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="<?= PROJECT_PATH ?>/index.php">Dashboard</a></li>
+                <li class="breadcrumb-item active">Pacientes</li>
+            </ol>
+        </nav>
     </div>
-    <div class="col-md-6 text-end">
-        <a href="nuevo.php" class="btn btn-primary">
+    <div class="col-md-4">
+        <div class="input-group shadow-sm">
+            <span class="input-group-text bg-white"><i class="bi bi-search text-muted"></i></span>
+            <input type="text" class="form-control border-start-0" id="searchInput"
+                placeholder="Buscar por nombre o expediente...">
+        </div>
+    </div>
+    <div class="col-md-3 text-end">
+        <a href="nuevo.php" class="btn btn-primary shadow-sm w-100">
             <i class="bi bi-person-plus"></i> Nuevo Paciente
         </a>
     </div>

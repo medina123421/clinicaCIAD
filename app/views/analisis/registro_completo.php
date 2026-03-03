@@ -167,9 +167,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             // 6. Guardar Insulina
-            if (!empty($_POST['insulina_basal'])) {
+            if (!empty($_POST['insulina_basal']) || !empty($_POST['homa_ir'])) {
                 $datos_in = array_merge($datos_comunes, [
-                    'insulina_basal' => $_POST['insulina_basal']
+                    'insulina_basal' => $_POST['insulina_basal'],
+                    'homa_ir' => $_POST['homa_ir'] ?? null
                 ]);
                 if (!$analisis_model->registrarInsulina($datos_in)) {
                     $exito = false;
@@ -563,6 +564,10 @@ include '../../includes/header.php';
                     <div class="col-md-4">
                         <label class="form-label">Insulina Basal (µUI/mL)</label>
                         <input type="number" step="0.01" class="form-control" name="insulina_basal">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Índice HOMA-IR</label>
+                        <input type="number" step="0.01" class="form-control" name="homa_ir">
                     </div>
                 </div>
             </div>
