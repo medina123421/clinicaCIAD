@@ -54,8 +54,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         try {
             if ($visita_model->crear($datos, $_SESSION['usuario_id'])) {
-                $mensaje = 'Visita registrada correctamente.';
-                $tipo_mensaje = 'success';
+                // PRG Pattern: Redirect after POST
+                $_SESSION['mensaje'] = 'Visita registrada correctamente.';
+                $_SESSION['tipo_mensaje'] = 'success';
+                header('Location: lista.php');
+                exit();
             } else {
                 $mensaje = 'Error al registrar la visita.';
                 $tipo_mensaje = 'danger';
@@ -65,6 +68,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $tipo_mensaje = 'danger';
         }
     }
+}
+
+// Obtener mensajes de la sesión si existen (PRG)
+if (isset($_SESSION['mensaje'])) {
+    $mensaje = $_SESSION['mensaje'];
+    $tipo_mensaje = $_SESSION['tipo_mensaje'];
+    unset($_SESSION['mensaje'], $_SESSION['tipo_mensaje']);
 }
 
 include '../../includes/header.php';
@@ -218,9 +228,15 @@ include '../../includes/header.php';
                 <div class="mt-4 p-3 bg-light rounded border">
                     <h6 class="fw-bold mb-2">Guía de colores:</h6>
                     <div class="d-flex gap-4 flex-wrap">
-                        <div><span class="badge border" style="background-color: #28a745; width: 15px; height: 15px; display: inline-block; vertical-align: middle;"></span> Disponible</div>
-                        <div><span class="badge border" style="background-color: #ffc107; width: 15px; height: 15px; display: inline-block; vertical-align: middle;"></span> Media Ocupación</div>
-                        <div><span class="badge border" style="background-color: #dc3545; width: 15px; height: 15px; display: inline-block; vertical-align: middle;"></span> Cupo Lleno</div>
+                        <div><span class="badge border"
+                                style="background-color: #28a745; width: 15px; height: 15px; display: inline-block; vertical-align: middle;"></span>
+                            Disponible</div>
+                        <div><span class="badge border"
+                                style="background-color: #ffc107; width: 15px; height: 15px; display: inline-block; vertical-align: middle;"></span>
+                            Media Ocupación</div>
+                        <div><span class="badge border"
+                                style="background-color: #dc3545; width: 15px; height: 15px; display: inline-block; vertical-align: middle;"></span>
+                            Cupo Lleno</div>
                     </div>
                 </div>
             </div>
@@ -342,7 +358,7 @@ include '../../includes/header.php';
         function fetchCounts(start, end) {
             const startStr = start.toISOString().split('T')[0];
             const endStr = end.toISOString().split('T')[0];
-            
+
             fetch(`../../ajax/disponibilidad_visitas.php?action=counts&start=${startStr}&end=${endStr}`)
                 .then(r => r.json())
                 .then(data => {
@@ -372,13 +388,13 @@ include '../../includes/header.php';
             if (count > 0) {
                 let cellClass = 'fc-day-available';
                 let badgeClass = 'capacity-low';
-                
-                if (count >= 4) { 
-                    cellClass = 'fc-day-full'; 
-                    badgeClass = 'capacity-full'; 
-                } else if (count >= 2) { 
-                    cellClass = 'fc-day-medium'; 
-                    badgeClass = 'capacity-medium'; 
+
+                if (count >= 4) {
+                    cellClass = 'fc-day-full';
+                    badgeClass = 'capacity-full';
+                } else if (count >= 2) {
+                    cellClass = 'fc-day-medium';
+                    badgeClass = 'capacity-medium';
                 }
 
                 el.classList.add(cellClass);

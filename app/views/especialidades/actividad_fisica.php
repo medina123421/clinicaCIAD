@@ -47,16 +47,14 @@ if ($id_visita) {
         $paciente = $pacienteModel->obtenerPorId($visita['id_paciente']);
     }
 } else {
-    $query_recent = "SELECT v.*,
-                    CONCAT(p.nombre, ' ', p.apellido_paterno, ' ', IFNULL(p.apellido_materno, '')) as paciente_nombre,
-                    p.numero_expediente
-                    FROM visitas v
-                    JOIN pacientes p ON v.id_paciente = p.id_paciente
-                    ORDER BY v.fecha_visita DESC
-                    LIMIT 10";
-    $stmt_recent = $db->prepare($query_recent);
-    $stmt_recent->execute();
-    $visitas_recientes = $stmt_recent->fetchAll(PDO::FETCH_ASSOC);
+    $query_pacientes = "SELECT p.id_paciente, p.numero_expediente,
+                        CONCAT(p.nombre, ' ', p.apellido_paterno, ' ', IFNULL(p.apellido_materno, '')) as nombre_completo,
+                        (SELECT id_visita FROM visitas WHERE id_paciente = p.id_paciente ORDER BY fecha_visita DESC LIMIT 1) as ultima_visita_id,
+                        (SELECT fecha_visita FROM visitas WHERE id_paciente = p.id_paciente ORDER BY fecha_visita DESC LIMIT 1) as ultima_visita_fecha
+                        FROM pacientes p WHERE p.activo = 1 ORDER BY p.nombre ASC LIMIT 200";
+    $stmt_pac = $db->prepare($query_pacientes);
+    $stmt_pac->execute();
+    $lista_pacientes = $stmt_pac->fetchAll(PDO::FETCH_ASSOC);
 }
 
 $page_title = 'Actividad Física';
@@ -134,23 +132,20 @@ include __DIR__ . '/../../includes/header.php';
             <?php if ($paciente): ?>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="../pacientes/detalle_paciente.php?id=<?= (int)$paciente['id_paciente'] ?>"><?= htmlspecialchars($paciente['nombre'] . ' ' . $paciente['apellido_paterno']) ?></a></li>
-                        <li class="breadcrumb-item active">Evaluación Actividad Física</li>
+                        <li class="breadcrumb-item"><a href="<?= PROJECT_PATH ?>/app/views/pacientes/detalle.php?id=<?= (int)$paciente['id_paciente'] ?>"><?= htmlspecialchars($paciente['nombre'] . ' ' . $paciente['apellido_paterno']) ?></a></li>
+                        <li class="breadcrumb-item active">Actividad Física</li>
                     </ol>
                 </nav>
             <?php else: ?>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="../../index.php">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="<?= PROJECT_PATH ?>/index.php">Dashboard</a></li>
                         <li class="breadcrumb-item active">Selección de Paciente</li>
                     </ol>
                 </nav>
             <?php endif; ?>
         </div>
-        <div class="btn-group">
-            <a href="../../index.php" class="btn btn-light shadow-sm"><i class="bi bi-house"></i> Home</a>
-            <a href="../visitas/lista.php" class="btn btn-success shadow-sm"><i class="bi bi-clipboard-data"></i> Visitas</a>
-        </div>
+        <a href="<?= PROJECT_PATH ?>/index.php" class="btn btn-light shadow-sm"><i class="bi bi-house"></i> Home</a>
     </div>
 
     <?php if ($message): ?>
@@ -162,74 +157,49 @@ include __DIR__ . '/../../includes/header.php';
     <?php endif; ?>
 
     <?php if (!$id_visita): ?>
-        <div class="row">
-            <div class="col-md-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
                 <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-header bg-success text-white">
-                        <i class="bi bi-search"></i> Buscar Paciente
+                    <div class="card-header bg-success text-white d-flex align-items-center">
+                        <i class="bi bi-person-plus-fill me-2 fs-5"></i>
+                        <span>Seleccionar Paciente &mdash; Actividad F&iacute;sica</span>
                     </div>
-                    <div class="card-body">
-                        <p class="text-muted small">Busque al paciente para abrir la evaluación de Actividad Física.</p>
-                        <div class="mb-3">
-                            <input type="text" class="form-control" id="patientSearchInput" placeholder="Nombre o expediente...">
+                    <div class="card-body p-4">
+                        <p class="text-muted mb-4">Busque y seleccione al paciente para realizar su evaluaci&oacute;n de Actividad F&iacute;sica.</p>
+                        <div class="input-group mb-4">
+                            <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                            <input type="text" class="form-control border-start-0 border-success border-opacity-25"
+                                id="patientSelectionInput" placeholder="Buscar por nombre o n&uacute;mero de expediente...">
                         </div>
-                        <div id="patientSearchResults" class="list-group list-group-flush" style="max-height: 300px; overflow-y: auto;">
-                            <div class="text-center py-3 text-muted">
-                                <i class="bi bi-person-fill-gear fs-2 d-block mb-2"></i>
-                                <small>Escriba para buscar</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-7">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-dark text-white">
-                        <i class="bi bi-clock-history"></i> Visitas Recientes
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="table table-hover mb-0 align-middle">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Fecha</th>
-                                        <th>Paciente</th>
-                                        <th>Acción</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php if (!empty($visitas_recientes)): ?>
-                                        <?php foreach ($visitas_recientes as $v): ?>
-                                            <tr>
-                                                <td>
-                                                    <div class="fw-bold"><?= date('d/m/Y', strtotime($v['fecha_visita'])) ?></div>
-                                                    <small class="text-muted"><?= date('H:i', strtotime($v['fecha_visita'])) ?></small>
-                                                </td>
-                                                <td>
-                                                    <div><?= htmlspecialchars($v['paciente_nombre']) ?></div>
-                                                    <small class="badge bg-light text-dark border"><?= htmlspecialchars($v['numero_expediente']) ?></small>
-                                                </td>
-                                                <td>
-                                                    <a href="?id_visita=<?= (int)$v['id_visita'] ?>" class="btn btn-success btn-sm rounded-pill">Abrir Consulta <i class="bi bi-arrow-right-short"></i></a>
-                                                </td>
-                                            </tr>
-                                        <?php endforeach; ?>
+                        <div id="patientSearchResults" class="list-group list-group-flush shadow-sm rounded-3 border"
+                            style="max-height: 420px; overflow-y: auto;">
+                            <?php foreach ($lista_pacientes as $p):
+                                $searchText = strtolower($p['nombre_completo'] . ' ' . $p['numero_expediente']);
+                            ?>
+                            <div class="list-group-item list-group-item-action p-3 border-bottom patient-item"
+                                data-search="<?= htmlspecialchars($searchText) ?>">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1 fw-bold"><?= htmlspecialchars($p['nombre_completo']) ?></h6>
+                                        <small class="text-muted"><?= htmlspecialchars($p['numero_expediente']) ?></small>
+                                    </div>
+                                    <?php if ($p['ultima_visita_id']): ?>
+                                        <a href="actividad_fisica.php?id_visita=<?= $p['ultima_visita_id'] ?>"
+                                            class="btn btn-sm btn-outline-success rounded-pill">
+                                            <i class="bi bi-activity"></i> Abrir &Uacute;ltima
+                                            (<?= date('d/m/y', strtotime($p['ultima_visita_fecha'])) ?>)
+                                        </a>
                                     <?php else: ?>
-                                        <tr>
-                                            <td colspan="3" class="text-center py-4 text-muted">No hay visitas recientes</td>
-                                        </tr>
+                                        <span class="badge bg-light text-muted border">Sin visitas</span>
                                     <?php endif; ?>
-                                </tbody>
-                            </table>
+                                </div>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                        <div class="mt-3 text-center">
+                            <small class="text-muted">¿Paciente sin visita? <a href="<?= PROJECT_PATH ?>/app/views/visitas/nueva.php" class="text-success">Registrar nueva visita</a></small>
                         </div>
                     </div>
-                    <div class="card-footer bg-white text-center">
-                        <a href="../visitas/lista.php" class="btn btn-link btn-sm text-decoration-none">Ver todas las visitas</a>
-                    </div>
-                </div>
-                <div class="alert alert-info mt-4 border-0 shadow-sm">
-                    <i class="bi bi-info-circle-fill me-2"></i>
-                    Si el paciente no tiene visita registrada, <a href="../visitas/nueva.php" class="alert-link">registre una nueva visita</a> primero.
                 </div>
             </div>
         </div>
@@ -517,33 +487,15 @@ document.addEventListener('DOMContentLoaded', function() {
         actualizarSTS();
     }
 
-    var patientSearchInput = document.getElementById('patientSearchInput');
-    if (patientSearchInput) {
-        var resultsContainer = document.getElementById('patientSearchResults');
-        var debounce = function(fn, ms) {
-            var t;
-            return function() { clearTimeout(t); t = setTimeout(fn, ms); };
-        };
-        patientSearchInput.addEventListener('input', debounce(function() {
-            var search = this.value.trim();
-            if (search.length < 2) {
-                resultsContainer.innerHTML = '<div class="text-center py-3 text-muted"><i class="bi bi-person-fill-gear fs-2 d-block mb-2"></i><small>Escriba para buscar</small></div>';
-                return;
-            }
-            resultsContainer.innerHTML = '<div class="text-center py-3"><div class="spinner-border spinner-border-sm text-success"></div></div>';
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', '../../ajax/buscar_pacientes_actividad.php?search=' + encodeURIComponent(search));
-            xhr.onload = function() {
-                try {
-                    var r = JSON.parse(xhr.responseText);
-                    if (r.success && r.html) resultsContainer.innerHTML = r.html;
-                    else resultsContainer.innerHTML = '<div class="p-4 text-center text-muted">No se encontraron resultados</div>';
-                } catch (e) {
-                    resultsContainer.innerHTML = '<div class="p-4 text-center text-danger">Error al buscar</div>';
-                }
-            };
-            xhr.send();
-        }, 400));
+    // Client-side patient search filter
+    var patientSelectionInput = document.getElementById('patientSelectionInput');
+    if (patientSelectionInput) {
+        patientSelectionInput.addEventListener('input', function() {
+            var term = this.value.toLowerCase().trim();
+            document.querySelectorAll('#patientSearchResults .patient-item').forEach(function(el) {
+                el.style.display = el.dataset.search.includes(term) ? '' : 'none';
+            });
+        });
     }
 });
 </script>

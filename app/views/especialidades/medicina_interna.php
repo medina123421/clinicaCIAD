@@ -296,8 +296,7 @@ include '../../includes/header.php';
             <input type="hidden" name="save_consulta" value="1">
 
             <!-- TABS NAVIGATION -->
-            <ul class="nav nav-tabs mb-4 px-2 bg-white rounded shadow-sm sticky-top" style="top: 10px; z-index: 100;"
-                id="medicalTabs" role="tablist">
+            <ul class="nav nav-tabs mb-4 px-2 bg-white rounded shadow-sm" id="medicalTabs" role="tablist">
                 <li class="nav-item">
                     <button class="nav-link active" id="diag-tab" data-bs-toggle="tab" data-bs-target="#tab-diag"
                         type="button">1. Antecedentes y Diagnóstico</button>
@@ -313,6 +312,10 @@ include '../../includes/header.php';
                 <li class="nav-item">
                     <button class="nav-link" id="eval-tab" data-bs-toggle="tab" data-bs-target="#tab-eval" type="button">4.
                         Evaluación y Seguimiento</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" id="prox-tab" data-bs-toggle="tab" data-bs-target="#tab-prox" type="button">5.
+                        Próximos Estudios</button>
                 </li>
             </ul>
 
@@ -1064,9 +1067,364 @@ include '../../includes/header.php';
                         </div>
                     </div>
                 </div>
+
+                <!-- TAB 5: PRÓXIMOS ESTUDIOS -->
+                <div class="tab-pane fade" id="tab-prox" role="tabpanel">
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body p-4">
+                            <div class="mb-4">
+                                <h5 class="section-title mb-1"><i class="bi bi-calendar-event"></i> Solicitud de
+                                    Próximos Estudios</h5>
+                                <p class="text-muted mb-0">Seleccione los estudios que el paciente deberá realizarse
+                                    para su próxima consulta.</p>
+                            </div>
+
+                            <!-- 1. LABORATORIO -->
+                            <div class="medical-section mb-4 p-3 rounded"
+                                style="background-color: #f8f9fa; border-left: 4px solid #0d6efd;">
+                                <h6 class="fw-bold text-primary mb-3"><i class="bi bi-droplet-fill"></i> Laboratorio Clínico
+                                </h6>
+                                <div class="row row-cols-1 row-cols-md-3 g-2">
+                                    <div class="col"><?= renderCheckbox('prox_bh', 'BH (Biometría Hemática)', $datos) ?>
+                                    </div>
+                                    <div class="col"><?= renderCheckbox('prox_osc', 'OSC', $datos) ?></div>
+                                    <div class="col"><?= renderCheckbox('prox_ego', 'EGO (General de Orina)', $datos) ?>
+                                    </div>
+                                    <div class="col">
+                                        <?= renderCheckbox('prox_hba1c', 'HbA1c (Hemoglobina Glicosilada)', $datos) ?>
+                                    </div>
+                                    <div class="col">
+                                        <?= renderCheckbox('prox_perfil_tiroideo', 'Perfil Tiroideo', $datos) ?>
+                                    </div>
+                                    <div class="col">
+                                        <?= renderCheckbox('prox_perfil_hepatico', 'Perfil Hepático', $datos) ?>
+                                    </div>
+                                    <div class="col"><?= renderCheckbox('prox_insulina_basal', 'Insulina Basal', $datos) ?>
+                                    </div>
+                                    <div class="col">
+                                        <?= renderCheckbox('prox_qs3_i', 'QS3 I (Glu, Urea, Cr, Bun)', $datos) ?>
+                                    </div>
+                                    <div class="col"><?= renderCheckbox('prox_qs3_ii', 'QS3 II (Glu, Tg, Col)', $datos) ?>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row g-4">
+                                <!-- 2. RADIOLOGÍA -->
+                                <div class="col-md-6">
+                                    <div class="medical-section h-100 p-3 rounded"
+                                        style="background-color: #f0f7ff; border-left: 4px solid #0dcaf0;">
+                                        <h6 class="fw-bold text-info mb-3"><i class="bi bi-camera-fill"></i> Radiología
+                                            Convencional Digital</h6>
+                                        <div class="row row-cols-1 g-2">
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_rad_craneo', 'Cráneo AP y LAT', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_rad_senos', 'Senos paranasales L', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_rad_perfilograma', 'Perfilograma', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_rad_cuello', 'Cuello partes blandas LAT', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_rad_col_cervical', 'Columna Cervical AP y LAT', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_rad_col_dorsal', 'Columna Dorsal AP y LAT', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_rad_col_lumbar', 'Columna Lumbar AP y LAT', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <?= renderCheckbox('prox_rad_col_oblicuas', 'Columnas Oblicuas Región:', $datos) ?>
+                                                    <input type="text" name="prox_rad_col_oblicuas_desc"
+                                                        class="form-control form-control-sm border-0 border-bottom bg-transparent"
+                                                        placeholder="..."
+                                                        value="<?= htmlspecialchars($datos['prox_rad_col_oblicuas_desc'] ?? '') ?>">
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <?= renderCheckbox('prox_rad_col_dinamicas', 'Columnas Dinámicas Región:', $datos) ?>
+                                                    <input type="text" name="prox_rad_col_dinamicas_desc"
+                                                        class="form-control form-control-sm border-0 border-bottom bg-transparent"
+                                                        placeholder="..."
+                                                        value="<?= htmlspecialchars($datos['prox_rad_col_dinamicas_desc'] ?? '') ?>">
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <span class="fs-7">Tórax:</span>
+                                                    <?= renderCheckbox('prox_rad_torax_pa', 'PA', $datos) ?>
+                                                    <?= renderCheckbox('prox_rad_torax_lat', 'LAT', $datos) ?>
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <span class="fs-7">Tórax Óseo:</span>
+                                                    <?= renderCheckbox('prox_rad_torax_oseo_ap', 'AP', $datos) ?>
+                                                    <?= renderCheckbox('prox_rad_torax_oseo_obl', 'OBL', $datos) ?>
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <span class="fs-7">Abdomen:</span>
+                                                    <?= renderCheckbox('prox_rad_abd_supino', 'Supino', $datos) ?>
+                                                    <?= renderCheckbox('prox_rad_abd_bipe', 'Bipedestación', $datos) ?>
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_rad_escanometria', 'Escanometría', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <?= renderCheckbox('prox_rad_huesos', 'Huesos Región:', $datos) ?>
+                                                    <input type="text" name="prox_rad_huesos_desc"
+                                                        class="form-control form-control-sm border-0 border-bottom bg-transparent"
+                                                        placeholder="..."
+                                                        value="<?= htmlspecialchars($datos['prox_rad_huesos_desc'] ?? '') ?>">
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_rad_cefalopelvi', 'Cefalopelvimetría', $datos) ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 3. ESTUDIOS CONTRASTADOS -->
+                                <div class="col-md-6">
+                                    <div class="medical-section h-100 p-3 rounded"
+                                        style="background-color: #fff9f0; border-left: 4px solid #ffc107;">
+                                        <h6 class="fw-bold text-warning mb-3"><i class="bi bi-eyedropper"></i> Estudios
+                                            Contrastados</h6>
+                                        <div class="row row-cols-1 g-2">
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_con_esofagograma', 'Esofagograma', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_con_serie_egd', 'Serie Esofagogastroduodenal', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_con_transito_int', 'Tránsito Intestinal', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_con_colon_enema', 'Colon por Enema', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_con_colangio_t', 'Colangiografía por sonda T', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_con_urograma', 'Urograma Excretor', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_con_cistograma', 'Cistograma', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_con_uretrograma', 'Uretrograma retrógrado', $datos) ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 4. ULTRASONIDO -->
+                                <div class="col-md-6">
+                                    <div class="medical-section h-100 p-3 rounded"
+                                        style="background-color: #f1fdf1; border-left: 4px solid #198754;">
+                                        <h6 class="fw-bold text-success mb-3"><i class="bi bi-broadcast"></i> Ultrasonido
+                                        </h6>
+                                        <div class="row row-cols-1 g-2">
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_us_abd_completo', 'Abdomen Completo', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_us_higado_vias', 'Hígado y Vías Biliares o Abd. Sup.', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_us_renal_vias', 'Renal y Vías Urinarias o Abd. Inf.', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_us_pelvico_gin', 'Pélvico Ginecológico', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_us_gin_endovag', 'Ginecológico Endovaginal', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_us_prostatico', 'Prostático', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_us_pros_transrectal', 'Prostático Transrectal', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_us_testicular', 'Testicular', $datos) ?>
+                                            </div>
+                                            <div class="col"><?= renderCheckbox('prox_us_inguinal', 'Inguinal', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_us_cuello_tiroides', 'Cuello y/o Tiroides', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_us_transfontanelar', 'Transfontanelar', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_us_obstetrico', 'Obstétrico', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_us_obstetrico_4d', 'Obstétrico 4D', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_us_obstetrico_doppler', 'Obstétrico Doppler', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_us_perfil_biofisico', 'Perfil Biofísico o Estructural', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_us_doppler_obs', 'Doppler Obstétrico', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_us_doppler_carotida', 'Doppler Carotídeo', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_us_doppler_venoso_art', 'Doppler MP y/o MT Venoso/Art.', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_us_doppler_ext_venoso_art', 'Doppler Ambas Extr. Venoso/Art.', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_us_doppler_abd_renal', 'Doppler Abdominal o Renal', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_us_doppler_testicular', 'Doppler Testicular', $datos) ?>
+                                            </div>
+                                            <div class="col"><?= renderCheckbox('prox_us_mamario', 'Mamario', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_us_tejidos_blandos', 'Tejidos Blandos (Región)', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_us_musculoesqueletico', 'Musculoesquelético (Región)', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_us_prueba_boyden', 'Prueba de Boyden', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_us_seguimientos_foli', 'Seguimientos Foliculares', $datos) ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 5. TOMOGRAFÍA (TAC) -->
+                                <div class="col-md-6">
+                                    <div class="medical-section h-100 p-3 rounded"
+                                        style="background-color: #fcecef; border-left: 4px solid #d63384;">
+                                        <h6 class="fw-bold text-danger mb-3"><i class="bi bi-box-fill"></i> Tomografía (TAC)
+                                        </h6>
+                                        <div class="mb-3 d-flex gap-4 border-bottom pb-2">
+                                            <?= renderCheckbox('prox_tac_simple', '<strong>SIMPLE</strong>', $datos) ?>
+                                            <?= renderCheckbox('prox_tac_contraste', '<strong>CON CONTRASTE</strong>', $datos) ?>
+                                        </div>
+                                        <div class="row row-cols-1 g-2">
+                                            <div class="col"><?= renderCheckbox('prox_tac_craneo', 'Cráneo', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_tac_silla_turca', 'Silla Turca', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_tac_senos', 'Senos Paranasales', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_tac_orbitas_oidos', 'Órbitas y Oídos', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_tac_macizo_3d', 'Macizo Facial 3D', $datos) ?>
+                                            </div>
+                                            <div class="col"><?= renderCheckbox('prox_tac_cuello', 'Cuello', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_tac_col_cervical', 'Columna Cervical', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_tac_col_dorsal', 'Columna Dorsal', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_tac_col_lumbar', 'Columna Lumbar', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_tac_torax_ar', 'Tórax Alta Resolución', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_tac_abdominopelvica', 'Abdominopélvica', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_tac_toracoabdominopelvica', 'Toracoabdominopélvica', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_tac_urotac', 'Urotomografía', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_tac_cadera_3d', 'Cadera 3D', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <?= renderCheckbox('prox_tac_hombro', 'Hombro', $datos) ?>
+                                                    <?= renderCheckbox('prox_tac_codo', 'Codo', $datos) ?>
+                                                    <?= renderCheckbox('prox_tac_muneca', 'Muñeca', $datos) ?>
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <?= renderCheckbox('prox_tac_rodilla', 'Rodilla', $datos) ?>
+                                                    <?= renderCheckbox('prox_tac_tobillo', 'Tobillo', $datos) ?>
+                                                    <span class="fs-7">Otra:</span>
+                                                    <input type="text" name="prox_tac_otra"
+                                                        class="form-control form-control-sm border-0 border-bottom bg-transparent"
+                                                        placeholder="..."
+                                                        value="<?= htmlspecialchars($datos['prox_tac_otra'] ?? '') ?>">
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_tac_angio_carotidas', 'Angiotomografía Carótidas', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_tac_angio_aorta', 'Angiotomografía Aorta', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_tac_angio_pulmonar', 'Angiotomografía Pulmonar', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_tac_angio_abdominal', 'Angiotomografía Abdominal', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_tac_angio_renal', 'Angiotomografía Renal', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_tac_angio_ext_sup', 'Angiotomografía Extremidades Sup.', $datos) ?>
+                                            </div>
+                                            <div class="col">
+                                                <?= renderCheckbox('prox_tac_angio_ext_inf', 'Angiotomografía Extremidades Inf.', $datos) ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr class="my-4">
+                            <div class="alert alert-info border-0 shadow-sm mb-0">
+                                <i class="bi bi-info-circle-fill me-2"></i>
+                                Estos estudios aparecerán seleccionados en la orden médica impresa. Use el botón anterior
+                                para generar el PDF.
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="mt-4 mb-5 text-center sticky-bottom bg-white p-3 rounded shadow">
+            <div class="mt-4 mb-5 text-center bg-white p-3 rounded shadow">
                 <button type="submit" class="btn btn-primary btn-lg px-5">
                     <i class="bi bi-save2"></i> Guardar Consulta Medicina Interna
                 </button>

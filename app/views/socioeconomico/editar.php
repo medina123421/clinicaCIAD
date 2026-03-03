@@ -554,7 +554,7 @@ include '../../includes/header.php';
                     <h5 class="card-title">Información Específica (Diabetes)</h5>
 
                     <div class="mb-3">
-                        <label class="form-label">Diagnóstico de Diabetes (Seleccione máximo 2):</label>
+                        <label class="form-label">Diagnóstico de Diabetes:</label>
                         <div class="d-flex flex-wrap gap-3" id="diabetesChecklist">
                             <?php
                             $diabetes_opts = [
@@ -904,11 +904,14 @@ include '../../includes/header.php';
         const diabetesChecks = document.querySelectorAll('.diabetes-check');
         diabetesChecks.forEach(check => {
             check.addEventListener('change', function () {
+                // Límite de selección en Diagnóstico de Diabetes (Eliminado por solicitud de usuario)
+                /*
                 const checkedCount = document.querySelectorAll('.diabetes-check:checked').length;
                 if (checkedCount > 2) {
                     this.checked = false;
                     alert('Puede seleccionar un máximo de 2 opciones de diagnóstico.');
                 }
+                */
 
                 // Mostrar/Ocultar "Otro"
                 if (this.value === 'Otros tipos de diabetes') {

@@ -266,8 +266,7 @@ include '../../includes/header.php';
             <input type="hidden" name="id_visita" value="<?= $id_visita ?>">
             <input type="hidden" name="save_consulta" value="1">
 
-            <ul class="nav nav-tabs mb-4 px-2 bg-white rounded shadow-sm sticky-top" style="top: 10px; z-index: 100;"
-                id="nutriTabs" role="tablist">
+            <ul class="nav nav-tabs mb-4 px-2 bg-white rounded shadow-sm" id="nutriTabs" role="tablist">
                 <li class="nav-item">
                     <button class="nav-link active" id="antro-tab" data-bs-toggle="tab" data-bs-target="#antro"
                         type="button"><i class="bi bi-rulers"></i> Antropometría</button>
@@ -575,10 +574,10 @@ include '../../includes/header.php';
                                     </thead>
                                     <tbody>
                                         <?php
-                                        $rec = $datos['recordatorio_24h'] ?? [];
                                         $comidas = [
                                             'desayuno' => 'Desayuno',
                                             'almuerzo' => 'Almuerzo',
+                                            'analisis_externos' => 'Análisis Externos',
                                             'comida' => 'Comida',
                                             'colacion' => 'Colación',
                                             'cena' => 'Cena'
@@ -813,6 +812,11 @@ include '../../includes/header.php';
                                     <input type="text" class="form-control" name="objetivos_otro" placeholder="Otro:"
                                         value="<?= htmlspecialchars($datos['objetivos_otro'] ?? '') ?>">
                                 </div>
+                                <div class="col-12 mt-3">
+                                    <label class="form-label fw-bold">Observaciones / Comentarios para Objetivos</label>
+                                    <textarea class="form-control" name="comentarios_objetivos" rows="2"
+                                        placeholder="Observaciones para objetivos..."><?= htmlspecialchars($datos['comentarios_objetivos'] ?? '') ?></textarea>
+                                </div>
                             </div>
 
                             <label class="form-label fw-bold">Recomendaciones Generales</label>
@@ -851,18 +855,25 @@ include '../../includes/header.php';
                                         placeholder="Otros:"
                                         value="<?= htmlspecialchars($datos['recomendaciones_otros'] ?? '') ?>">
                                 </div>
+                                <div class="col-12 mt-3">
+                                    <label class="form-label fw-bold">Observaciones / Comentarios para
+                                        Recomendaciones</label>
+                                    <textarea class="form-control" name="recomendaciones_texto" rows="3"
+                                        placeholder="Recomendaciones generales, específicas o notas adicionales..."><?= htmlspecialchars($datos['recomendaciones_texto'] ?? '') ?></textarea>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-                        <a href="../../../index.php" class="btn btn-secondary me-md-2">Cancelar</a>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4 mb-4">
+                        <a href="<?= PROJECT_PATH ?>/index.php" class="btn btn-secondary me-md-2">Cancelar</a>
                         <button type="submit" class="btn btn-success"><i class="bi bi-save"></i> Guardar Consulta
                             Nutricional</button>
                     </div>
-                </div>
+                </div> <!-- Cierra tab-pane dx -->
 
-            </div>
+            </div> <!-- Cierra tab-content -->
+
         </form>
     <?php endif; ?>
 </div>

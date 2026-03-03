@@ -158,13 +158,6 @@ header('Content-Type: text/html; charset=UTF-8');
                 <div></div> <!-- Espacio reservado -->
 
                 <div class="top-bar-icons">
-                    <a href="#" class="icon-btn">
-                        <i class="bi bi-chat-dots"></i>
-                        <span class="badge-dot"></span>
-                    </a>
-                    <a href="#" class="icon-btn">
-                        <i class="bi bi-heart"></i>
-                    </a>
                     <div class="user-profile">
                         <div class="user-avatar d-flex align-items-center justify-content-center bg-light">
                             <i class="bi bi-person"></i>
