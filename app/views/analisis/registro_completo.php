@@ -166,11 +166,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
 
-            // 6. Guardar Insulina
+            // 6. Guardar Insulina (con cálculo automático de HOMA-IR)
             if (!empty($_POST['insulina_basal']) || !empty($_POST['homa_ir'])) {
+                // Convertir a números y calcular HOMA-IR si hay datos suficientes
+                $insulina_basal = ($_POST['insulina_basal'] ?? '') !== '' ? (float) $_POST['insulina_basal'] : null;
+                // Usamos la glucosa de Química Sanguínea como glucosa en ayunas (mg/dL)
+                $glucosa_qs = ($_POST['glucosa'] ?? '') !== '' ? (float) $_POST['glucosa'] : null;
+
+                $homa_calculado = null;
+                if ($insulina_basal !== null && $glucosa_qs !== null) {
+                    // Fórmula clásica HOMA-IR para mg/dL: (glucosa * insulina) / 405
+                    $homa_calculado = round(($glucosa_qs * $insulina_basal) / 405, 2);
+                } elseif (($_POST['homa_ir'] ?? '') !== '') {
+                    // Fallback: si por alguna razón no hay glucosa, usar el valor ingresado manualmente
+                    $homa_calculado = (float) $_POST['homa_ir'];
+                }
+
                 $datos_in = array_merge($datos_comunes, [
-                    'insulina_basal' => $_POST['insulina_basal'],
-                    'homa_ir' => $_POST['homa_ir'] ?? null
+                    'insulina_basal' => $insulina_basal,
+                    'homa_ir' => $homa_calculado
                 ]);
                 if (!$analisis_model->registrarInsulina($datos_in)) {
                     $exito = false;
@@ -563,11 +577,11 @@ include '../../includes/header.php';
                 <div class="row g-3">
                     <div class="col-md-4">
                         <label class="form-label">Insulina Basal (µUI/mL)</label>
-                        <input type="number" step="0.01" class="form-control" name="insulina_basal">
+                        <input type="number" step="0.01" class="form-control" name="insulina_basal" id="insulina_basal">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Índice HOMA-IR</label>
-                        <input type="number" step="0.01" class="form-control" name="homa_ir">
+                        <input type="number" step="0.01" class="form-control" name="homa_ir" id="homa_ir" readonly>
                     </div>
                 </div>
             </div>
@@ -590,7 +604,8 @@ include '../../includes/header.php';
 </div>
 
 <script>
-    document.getElementById('busqueda_paciente').addEventListener('c hange', function () {
+    // Asociar paciente seleccionado con su ID oculto
+    document.getElementById('busqueda_paciente').addEventListener('change', function () {
         var val = this.value;
         var options = document.getElementById('datalistOptions').options;
         var idInput = document.getElementById('id_paciente');
@@ -602,6 +617,31 @@ include '../../includes/header.php';
             }
         }
     });
+
+    // Cálculo automático de HOMA-IR en cliente:
+    // HOMA-IR = (glucosa en mg/dL * insulina basal µUI/mL) / 405
+    (function () {
+        var glucosaInput = document.querySelector('input[name="glucosa"]');
+        var insulinaInput = document.getElementById('insulina_basal');
+        var homaInput = document.getElementById('homa_ir');
+
+        if (!glucosaInput || !insulinaInput || !homaInput) return;
+
+        function actualizarHoma() {
+            var g = parseFloat(glucosaInput.value);
+            var i = parseFloat(insulinaInput.value);
+
+            if (!isNaN(g) && g > 0 && !isNaN(i) && i > 0) {
+                var homa = (g * i) / 405;
+                homaInput.value = homa.toFixed(2);
+            } else {
+                homaInput.value = '';
+            }
+        }
+
+        glucosaInput.addEventListener('input', actualizarHoma);
+        insulinaInput.addEventListener('input', actualizarHoma);
+    })();
 </script>
 
 <?php include '../../includes/footer.php'; ?>
